@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+  <TextView
+      android:id="@+id/nameHeader"
+      android:text="@string/label_name"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="5"
+      android:gravity="start"
+      android:textStyle="bold"
+      android:textAppearance="?android:attr/textAppearanceMedium"
+      android:textColor="#FFFFFF"
+      android:padding="10dp"
+      android:background="#336699"/>
+
+  <TextView
+      android:id="@+id/categoriesHeader"
+      android:text="@string/label_categories"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="4"
+      android:gravity="start"
+      android:textStyle="bold"
+      android:textAppearance="?android:attr/textAppearanceMedium"
+      android:textColor="#FFFFFF"
+      android:padding="10dp"
+      android:background="#336699"/>
+  <TextView
+      android:id="@+id/createdHeader"
+      android:text="@string/label_created"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="4"
+      android:gravity="start"
+      android:textStyle="bold"
+      android:textAppearance="?android:attr/textAppearanceMedium"
+      android:textColor="#FFFFFF"
+      android:padding="10dp"
+      android:background="#336699"/>
+</LinearLayout>

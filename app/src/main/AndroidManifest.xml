@@ -1,0 +1,43 @@
+<manifest package="com.madinnovations.recipekeeper"
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools">
+
+  <uses-permission
+      android:name="android.permission.READ_EXTERNAL_STORAGE" />
+  <uses-permission
+      android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+  <application
+      android:name=".view.RecipeKeeperApp"
+      android:allowBackup="true"
+      android:icon="@mipmap/ic_launcher"
+      android:label="@string/app_name"
+      android:supportsRtl="true"
+      android:theme="@style/AppTheme">
+    <activity android:name=".view.activities.recipesList.RecipesListActivity"
+              android:label="@string/app_name"
+              android:windowSoftInputMode="adjustPan">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+    </activity>
+    <activity android:name=".view.activities.recipeDetail.RecipeDetailActivity"
+              android:label="@string/label_editRecipe"
+              android:parentActivityName=".view.activities.recipesList.RecipesListActivity"
+              tools:ignore="UnusedAttribute"
+              android:windowSoftInputMode="adjustPan">
+      <meta-data
+        android:name="android.support.PARENT_ACTIVITY"
+        android:value=".view.activities.recipesList.RecipesListActivity"/>
+    </activity>
+    <meta-data android:name="RECIPE_KEEPER_DB_NAME" android:value="recipeKeeper.db"/>
+    <meta-data android:name="RECIPE_KEEPER_DB_VERSION" android:value="1"/>
+    <meta-data android:name="RECIPE_KEEPER_MODELS" android:value="
+      com.madinnovations.model.entities.Recipe,
+      com.madinnovations.model.entities.Category,
+      com.madinnovations.model.entities.UnitOfMeasure,
+      com.madinnovations.model.entities.Ingredient"/>
+  </application>
+
+</manifest>

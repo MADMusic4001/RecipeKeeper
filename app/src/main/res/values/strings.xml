@@ -1,0 +1,45 @@
+<resources>
+  <string name="app_name">RecipeKeeper</string>
+  <string name="default_recipe_name">New Recipe</string>
+
+  <!-- Widget Labels -->
+  <string name="label_categories">Categories</string>
+  <string name="label_category">Category</string>
+  <string name="label_created">Created</string>
+  <string name="label_description">Description</string>
+  <string name="label_ingredient">Ingredient</string>
+  <string name="label_ingredients">Ingredients</string>
+  <string name="label_name">Name</string>
+  <string name="label_notes">Notes</string>
+  <string name="label_plural_name">Plural Name</string>
+  <string name="label_singular_name">Singular Name</string>
+  <string name="label_source">Source</string>
+  <string name="label_uom">Unit of Measure</string>
+  <string name="label_updated">Updated</string>
+  <string name="label_value">Value</string>
+  <string name="label_editRecipe">Edit Recipe</string>
+  <string name="label_actionNewRecipe">New Recipe</string>
+  <string name="label_actionExport">Export all data</string>
+  <string name="label_actionImport">Import all data</string>
+
+  <!-- Settings strings -->
+  <string name="label_settings">Settings</string>
+
+  <!-- Exception strings -->
+  <string name="exception_dbAccessError">Unable to access database.</string>
+  <string name="exception_categoryNotSaved">Category not saved.</string>
+  <string name="exception_categoryNotRemoved">Category not removed.</string>
+  <string name="exception_ingredientNotSaved">Ingredient not saved.</string>
+  <string name="exception_ingredientNotRemoved">Ingredient not removed.</string>
+  <string name="exception_recipeNotSaved">Recipe not saved.</string>
+  <string name="exception_recipeNotRemoved">Recipe not removed.</string>
+  <string name="exception_recipeCategoryNotSaved">RecipeCategory not saved.</string>
+  <string name="exception_recipeCategoryNotRemoved">RecipeCategory not removed.</string>
+  <string name="exception_unitOfMeasureNotSaved">UnitOfMeasure not saved.</string>
+  <string name="exception_unitOfMeasureNotRemoved">UnitOfMeasure not removed.</string>
+  <string name="exception_externalStorageNotAvailable">Cannot load %1$s. External Storage is unavailable.</string>
+  <string name="exception_dirNotCreated">Could not create directory %1$s</string>
+  <string name="exception_errorOpeningForWrite">Unable to save file.</string>
+  <string name="exception_recipeLoadError">Unable to load Recipe %1$s.</string>
+  <string name="exception_versionMismatch">Your data cannot be loaded by this version of the app.</string>
+</resources>

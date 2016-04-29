@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context=".view.activities.recipesList.RecipesListActivity">
+  <item
+    android:id="@+id/actionNewRecipe"
+    android:icon="@drawable/ic_action_new"
+    android:title="@string/label_actionNewRecipe"
+    android:showAsAction="ifRoom"/>
+  <item
+    android:id="@+id/action_export"
+    android:title="@string/label_actionExport"
+    android:showAsAction="never"/>
+  <item
+    android:id="@+id/action_import"
+    android:title="@string/label_actionImport"
+    android:showAsAction="never"/>
+  <item
+    android:id="@+id/actionSettings"
+    android:title="@string/label_settings"
+    android:showAsAction="never"/>
+</menu>

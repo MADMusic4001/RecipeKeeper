@@ -1,0 +1,206 @@
+/**
+ * Copyright (C) 2016 MadMusic4001
+ * <p/>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.madinnovations.recipekeeper.view.activities.recipesList;
+
+import android.app.Fragment;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import com.madinnovations.recipekeeper.R;
+import com.madinnovations.recipekeeper.controller.events.RecipeSavedEvent;
+import com.madinnovations.recipekeeper.controller.events.SaveRecipeEvent;
+import com.madinnovations.recipekeeper.model.entities.Recipe;
+import com.madinnovations.recipekeeper.model.utils.IntentConstants;
+import com.madinnovations.recipekeeper.view.activities.recipeDetail.RecipeDetailActivity;
+import com.madinnovations.recipekeeper.view.adapters.RecipeListAdapter;
+import com.madinnovations.recipekeeper.view.di.modules.FragmentModule;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import javax.inject.Inject;
+
+/**
+ * A RecipesListFragment manages the interaction with the Recipes List user interface.
+ */
+public class RecipesListFragment extends Fragment {
+	@Inject
+	protected RecipeListAdapter adapter;
+	@Inject
+	protected EventBus eventBus;
+	private OnRecipesListEventsListener	callbacksImpl = null;
+	private ListView listView;
+
+	@Override
+	public void onStop() {
+		eventBus.unregister(this);
+		super.onStop();
+	}
+
+	@Override
+	public void onAttach(Context context) {
+		super.onAttach(context);
+
+		try {
+			callbacksImpl = (OnRecipesListEventsListener)getActivity();
+		}
+		catch (ClassCastException ex) {
+			Log.d("RecipesListFragment:", ex.getMessage());
+			throw new ClassCastException(getActivity().toString() + " must implement OnRecipesListEventsListener.");
+		}
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		setHasOptionsMenu(true);
+	}
+
+	@Nullable
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		((RecipesListActivity)getActivity()).getActivityComponent().newFragmentComponent(new FragmentModule(this))
+				.injectInto(this);
+		eventBus.register(this);
+		View layout = inflater.inflate(R.layout.recipe_list_fragment, container, false);
+		listView = (ListView)layout.findViewById(R.id.rlf_list_view);
+		initListView();
+		return layout;
+	}
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.recipes_list_menu, menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		boolean result = false;
+
+		int id = item.getItemId();
+		if(id == R.id.actionNewRecipe){
+			Log.d("RecipeListFragment", "Creating new recipe");
+			eventBus.post(new SaveRecipeEvent(new Recipe()));
+			result = true;
+		}
+		return result || super.onOptionsItemSelected(item);
+	}
+
+	/**
+	 * Handles RecipeSavedEvents
+	 *
+	 * @param event  the RecipeSavedEvent
+	 */
+	@Subscribe
+	public void onRecipeEvent(RecipeSavedEvent event) {
+		Toast.makeText(getActivity(), event.getRecipe().getName(), Toast.LENGTH_SHORT).show();
+	}
+
+	// <editor-fold desc="Interface declarations">
+	/**
+	 * Defines methods to allow the fragment to communicate with the implementer (EditWorldActivity).
+	 */
+	public interface OnRecipesListEventsListener {
+		/**
+		 * Notifies the implementer when a {@code Recipe} is selected by the user.
+		 *
+		 * @param recipe the selected {@link Recipe}.
+		 */
+		void onRecipeSelected(Recipe recipe);
+	}
+	// </editor-fold>
+
+	// <editor-fold desc="Private plumbing methods">
+
+	private void initListView() {
+		View headerView;
+
+		headerView = getActivity().getLayoutInflater().inflate(
+				R.layout.recipes_list_header, listView, false);
+		listView.addHeaderView(headerView);
+
+		// Create and set onClick methods for sorting the {@link World} list.
+//		headerView.findViewById(R.id.nameHeader).setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				controller.sortRecipesByName();
+//			}
+//		});
+//		headerView.findViewById(R.id.categoriesHeader).setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				controller.sortRecipesByCategories();
+//			}
+//		});
+//		headerView.findViewById(R.id.createdHeader).setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				controller.sortRecipesByCreated();
+//			}
+//		});
+		View updatedView = headerView.findViewById(R.id.updatedHeader);
+		if(updatedView != null) {
+			updatedView.setOnClickListener(new View.OnClickListener
+					() {
+				@Override
+				public void onClick(View v) {
+//					controller.sortRecipesByUpdated();
+				}
+			});
+		}
+		listView.setAdapter(adapter);
+
+		// Clicking a row in the listView will send the user to the recipes details activity
+		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				Recipe theRecipe = (Recipe) listView.getItemAtPosition(position);
+				if (theRecipe != null) {
+					editRecipe(theRecipe);
+				}
+			}
+		});
+		registerForContextMenu(listView);
+	}
+
+	private void editRecipe(@NonNull Recipe recipe) {
+		callbacksImpl.onRecipeSelected(recipe);
+		Intent intent = new Intent(getActivity().getApplicationContext(), RecipeDetailActivity.class);
+		intent.putExtra(IntentConstants.RECIPE_DETAIL_INTENT_RECIPE_ID, recipe.getName());
+		startActivity(intent);
+	}
+	// </editor-fold>
+}
