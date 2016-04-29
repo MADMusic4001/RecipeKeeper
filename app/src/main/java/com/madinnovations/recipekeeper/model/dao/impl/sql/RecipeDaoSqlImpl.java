@@ -24,14 +24,12 @@ import com.madinnovations.recipekeeper.model.dao.RecipeDao;
 import com.madinnovations.recipekeeper.model.entities.Category;
 import com.madinnovations.recipekeeper.model.entities.Ingredient;
 import com.madinnovations.recipekeeper.model.entities.Recipe;
+import com.madinnovations.recipekeeper.model.utils.DataConstants;
 
 import java.util.Set;
 
 /**
- * ${CLASS_DESCRIPTION}
- *
- * @author Mark
- * Created 4/28/2016.
+ * Implementation of the {@link RecipeDao} for maintaining a {@link Recipe} in a SQLite database.
  */
 public class RecipeDaoSqlImpl implements BaseDaoSqlImpl, RecipeDao {
 	private static abstract class RecipeContract implements BaseColumns {
@@ -82,9 +80,9 @@ public class RecipeDaoSqlImpl implements BaseDaoSqlImpl, RecipeDao {
 
 		sqlHelper.getWritableDatabase().beginTransactionNonExclusive();
 		try {
-			if (recipe.getId() == UNINITIALIZED) {
+			if (recipe.getId() == DataConstants.UNINITIALIZED) {
 				recipe.setId(sqlHelper.getWritableDatabase().insert(RecipeContract.TABLE_NAME, null, values));
-				result = (recipe.getId() != UNINITIALIZED);
+				result = (recipe.getId() != DataConstants.UNINITIALIZED);
 			}
 			else {
 				values.put("_id", recipe.getId());
@@ -113,7 +111,7 @@ public class RecipeDaoSqlImpl implements BaseDaoSqlImpl, RecipeDao {
 		// Re-save all the ingredients in the Recipe object
 		if(result) {
 			for (Ingredient ingredient : recipe.getIngredients()) {
-				ingredient.setId(BaseDaoSqlImpl.UNINITIALIZED);
+				ingredient.setId(DataConstants.UNINITIALIZED);
 				ingredient.setParent(recipe);
 				result &= ingredientDao.save(ingredient);
 				if(!result) {

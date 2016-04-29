@@ -18,6 +18,7 @@ package com.madinnovations.recipekeeper.model.entities;
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
+import com.madinnovations.recipekeeper.model.utils.DataConstants;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ import java.util.List;
  * Created 4/17/2016.
  */
 public class Category {
-	private long id = -1;
+	private long id = DataConstants.UNINITIALIZED;
 	private String name;
 	private String description;
 

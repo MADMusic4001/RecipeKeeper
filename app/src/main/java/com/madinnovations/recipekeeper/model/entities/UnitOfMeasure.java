@@ -15,11 +15,13 @@
  */
 package com.madinnovations.recipekeeper.model.entities;
 
+import com.madinnovations.recipekeeper.model.utils.DataConstants;
+
 /**
  * An object that represents a unit of measure for cooking.
  */
 public class UnitOfMeasure {
-	private long id = -1;
+	private long id = DataConstants.UNINITIALIZED;
 	private String singularName;
 	private String pluralName;
 	private String notes;

@@ -35,4 +35,5 @@ public final class DataConstants {
 	public static final String SELECTED_RECIPE_NAME  = PACKAGE_NAME + ".selected_recipe_name";
 
 	public static final int ID_WHEN_RESOURCE_NOT_FOUND        = -1;
+	public static final long UNINITIALIZED = -1L;
 }

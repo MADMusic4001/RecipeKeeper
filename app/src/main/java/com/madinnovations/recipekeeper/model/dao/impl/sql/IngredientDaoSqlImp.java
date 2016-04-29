@@ -20,14 +20,12 @@ import android.provider.BaseColumns;
 
 import com.madinnovations.recipekeeper.model.dao.IngredientDao;
 import com.madinnovations.recipekeeper.model.entities.Ingredient;
+import com.madinnovations.recipekeeper.model.utils.DataConstants;
 
 import java.util.Set;
 
 /**
- * ${CLASS_DESCRIPTION}
- *
- * @author Mark
- * Created 4/28/2016.
+ * Implementation of the {@link IngredientDao} for maintaining a {@link Ingredient} in a SQLite database.
  */
 public class IngredientDaoSqlImp implements BaseDaoSqlImpl, IngredientDao {
 	private static abstract class IngredientContract implements BaseColumns {
@@ -58,9 +56,9 @@ public class IngredientDaoSqlImp implements BaseDaoSqlImpl, IngredientDao {
 		values.put(IngredientContract.RECIPE_ID_COLUMN_NAME, ingredient.getParent().getId());
 
 		sqlHelper.getWritableDatabase().beginTransaction();
-		if(ingredient.getId() == UNINITIALIZED) {
+		if(ingredient.getId() == DataConstants.UNINITIALIZED) {
 			ingredient.setId(sqlHelper.getWritableDatabase().insert(IngredientContract.TABLE_NAME, null, values));
-			result = (ingredient.getId() != UNINITIALIZED);
+			result = (ingredient.getId() != DataConstants.UNINITIALIZED);
 		}
 		else {
 			values.put(IngredientContract._ID, ingredient.getId());

@@ -29,5 +29,4 @@ public interface BaseDaoSqlImpl {
 	public static final String EQUALS = "=";
 	public static final String NOT = "!";
 	public static final String PLACEHOLDER = "?";
-	public static final long UNINITIALIZED = -1L;
 }

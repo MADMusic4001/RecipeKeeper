@@ -20,16 +20,14 @@ import android.provider.BaseColumns;
 
 import com.madinnovations.recipekeeper.model.dao.UnitOfMeasureDao;
 import com.madinnovations.recipekeeper.model.entities.UnitOfMeasure;
+import com.madinnovations.recipekeeper.model.utils.DataConstants;
 
 import java.util.Set;
 
 import javax.inject.Singleton;
 
 /**
- * ${CLASS_DESCRIPTION}
- *
- * @author Mark
- * Created 4/28/2016.
+ * Implementation of the {@link UnitOfMeasureDao} for maintaining a {@link UnitOfMeasure} in a SQLite database.
  */
 @Singleton
 public class UnitOfMeasureDaoSqlImpl implements BaseDaoSqlImpl, UnitOfMeasureDao {
@@ -59,9 +57,9 @@ public class UnitOfMeasureDaoSqlImpl implements BaseDaoSqlImpl, UnitOfMeasureDao
 		values.put(UnitOfMeasureContract.NOTES_COLUMN_NAME, uom.getNotes());
 
 		sqlHelper.getWritableDatabase().beginTransaction();
-		if(uom.getId() == UNINITIALIZED) {
+		if(uom.getId() == DataConstants.UNINITIALIZED) {
 			uom.setId(sqlHelper.getWritableDatabase().insert(UnitOfMeasureContract.TABLE_NAME, null, values));
-			result = (uom.getId() != UNINITIALIZED);
+			result = (uom.getId() != DataConstants.UNINITIALIZED);
 		}
 		else {
 			values.put(UnitOfMeasureContract._ID, uom.getId());

@@ -20,16 +20,14 @@ import android.provider.BaseColumns;
 
 import com.madinnovations.recipekeeper.model.dao.CategoryDao;
 import com.madinnovations.recipekeeper.model.entities.Category;
+import com.madinnovations.recipekeeper.model.utils.DataConstants;
 
 import java.util.Set;
 
 import javax.inject.Singleton;
 
 /**
- * ${CLASS_DESCRIPTION}
- *
- * @author Mark
- * Created 4/28/2016.
+ * Implementation of the {@link CategoryDao} for maintaining a {@link Category} in a SQLite database.
  */
 @Singleton
 public class CategoryDaoSqlImpl implements BaseDaoSqlImpl, CategoryDao {
@@ -57,9 +55,9 @@ public class CategoryDaoSqlImpl implements BaseDaoSqlImpl, CategoryDao {
 		values.put(CategoryContract.DESCRIPTION_COLUMN_NAME, category.getDescription());
 
 		sqlHelper.getWritableDatabase().beginTransaction();
-		if(category.getId() == UNINITIALIZED) {
+		if(category.getId() == DataConstants.UNINITIALIZED) {
 			category.setId(sqlHelper.getWritableDatabase().insert(CategoryContract.TABLE_NAME, null, values));
-			result = (category.getId() != UNINITIALIZED);
+			result = (category.getId() != DataConstants.UNINITIALIZED);
 		}
 		else {
 			values.put("_id", category.getId());

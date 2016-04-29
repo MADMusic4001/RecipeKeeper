@@ -18,6 +18,7 @@ package com.madinnovations.recipekeeper.model.entities;
 import android.support.annotation.NonNull;
 
 import com.madinnovations.recipekeeper.model.dao.impl.sql.BaseDaoSqlImpl;
+import com.madinnovations.recipekeeper.model.utils.DataConstants;
 
 import java.util.Calendar;
 import java.util.HashSet;
@@ -30,7 +31,7 @@ import java.util.Set;
  * Created 4/17/2016.
  */
 public class Recipe {
-	private long id = BaseDaoSqlImpl.UNINITIALIZED;
+	private long id = DataConstants.UNINITIALIZED;
 	private String           name;
 	private String           description;
 	private String			 directions;
