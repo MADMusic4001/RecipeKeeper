@@ -54,10 +54,11 @@ public class RecipeDaoSqlImpl implements BaseDaoSqlImpl, RecipeDao {
 	private IngredientDao ingredientDao;
 
 	/**
-	 * Creates a RecipeDaoSqlImpl instance with the given {@link RecipeKeeperSqlHelper} and {@link CategoryDao}
+	 * Creates a RecipeDaoSqlImpl instance with the given {@link RecipeKeeperSqlHelper}, {@link CategoryDao} and {@link IngredientDao}
 	 *
 	 * @param sqlHelper  the RecipeKeeperSqlHelper to use
 	 * @param categoryDao  a CategoryDao instance
+	 * @param ingredientDao   an IngredientDao instance
 	 */
 	public RecipeDaoSqlImpl(RecipeKeeperSqlHelper sqlHelper, CategoryDao categoryDao,
 							IngredientDao ingredientDao) {

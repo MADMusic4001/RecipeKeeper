@@ -18,6 +18,7 @@ package com.madinnovations.recipekeeper.view.di.components;
 
 import com.madinnovations.recipekeeper.view.di.modules.ActivityModule;
 import com.madinnovations.recipekeeper.view.di.modules.ApplicationModule;
+import com.madinnovations.recipekeeper.view.di.modules.DaoModule;
 import com.madinnovations.recipekeeper.view.di.modules.EventHandlerModule;
 
 import javax.inject.Singleton;
@@ -28,7 +29,7 @@ import dagger.Component;
  *
  */
 @Singleton
-@Component(modules = {ApplicationModule.class, EventHandlerModule.class})
+@Component(modules = {ApplicationModule.class, EventHandlerModule.class, DaoModule.class})
 public interface ApplicationComponent {
 	ActivityComponent newActivityComponent(ActivityModule activityModule);
 }

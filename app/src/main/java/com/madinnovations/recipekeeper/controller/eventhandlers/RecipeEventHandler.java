@@ -19,6 +19,7 @@ import android.util.Log;
 
 import com.madinnovations.recipekeeper.controller.events.RecipeSavedEvent;
 import com.madinnovations.recipekeeper.controller.events.SaveRecipeEvent;
+import com.madinnovations.recipekeeper.model.dao.RecipeDao;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -32,30 +33,27 @@ import javax.inject.Singleton;
 @Singleton
 public class RecipeEventHandler {
 	private EventBus eventBus;
+	private RecipeDao recipeDao;
 
 	/**
 	 * Creates a new RecioeEventHandler instance configured with the given {@link EventBus} instance
 	 *
 	 * @param eventBus  an EventBus instance
 	 */
-	public RecipeEventHandler(EventBus eventBus) {
+	public RecipeEventHandler(EventBus eventBus, RecipeDao recipeDao) {
 		this.eventBus = eventBus;
+		this.recipeDao = recipeDao;
 	}
 
 	@Subscribe
 	public void onSaveRecipeEvent(SaveRecipeEvent event) {
 		Log.d("RecipeEventHandler", "SaveRecipeEvent received.");
-		event.getRecipe().save();
-		eventBus.post(new RecipeSavedEvent(event.getRecipe(), event.getRecipe().getId() != null));
+		boolean result = recipeDao.save(event.getRecipe());
+		eventBus.post(new RecipeSavedEvent(event.getRecipe(), result));
 	}
 
 	@Subscribe
 	public void onEvent(Object event) {
 		Log.d("RecipeEventHandler", event + " received,");
 	}
-
-//	@Subscribe
-//	public void onDeadEvent(DeadEvent event) {
-//		Log.d("RecipeEventHandler", "DeadEvent received,");
-//	}
 }
