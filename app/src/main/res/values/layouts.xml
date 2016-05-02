@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-  <!--<item name="recipes_list" type="layout">@layout/recipes_list</item>-->
-  <!--<item name="recipes_list_fragment" type="layout">@layout/recipe_list_fragment</item>-->
-  <!--<item name="recipe_detail" type="layout">@layout/recipe_detail</item>-->
-  <!--<item name="recipe_detail_fragment" type="layout">@layout/recipe_detail_fragment</item>-->
-</resources>

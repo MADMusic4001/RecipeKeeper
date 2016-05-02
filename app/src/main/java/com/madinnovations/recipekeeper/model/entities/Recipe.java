@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 MadMusic4001
+ * Copyright (C) 2016 MadInnovations
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package com.madinnovations.recipekeeper.model.entities;
 
 import android.support.annotation.NonNull;
 
-import com.madinnovations.recipekeeper.model.dao.impl.sql.BaseDaoSqlImpl;
 import com.madinnovations.recipekeeper.model.utils.DataConstants;
 
 import java.util.Calendar;
@@ -25,10 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * ${CLASS_DESCRIPTION}
- *
- * @author Mark
- * Created 4/17/2016.
+ * Class representing a cooking Recipe
  */
 public class Recipe {
 	private long id = DataConstants.UNINITIALIZED;
@@ -47,6 +43,8 @@ public class Recipe {
 	 */
 	public Recipe() {
 		super();
+		this.created = Calendar.getInstance();
+		this.updated = this.created;
 	}
 
 	/**
@@ -56,6 +54,8 @@ public class Recipe {
 	 */
 	public Recipe(@NonNull String name) {
 		this.name = name;
+		this.created = Calendar.getInstance();
+		this.updated = this.created;
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 MadMusic4001
+ * Copyright (C) 2016 MadInnovations
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,11 @@
 package com.madinnovations.recipekeeper.view.activities.recipeDetail;
 
 import android.app.Activity;
+import android.os.Bundle;
+
+import com.madinnovations.recipekeeper.view.RecipeKeeperApp;
+import com.madinnovations.recipekeeper.view.di.components.ActivityComponent;
+import com.madinnovations.recipekeeper.view.di.modules.ActivityModule;
 
 /**
  * ${CLASS_DESCRIPTION}
@@ -24,4 +29,19 @@ import android.app.Activity;
  * Created 4/23/2016.
  */
 public class RecipeDetailActivity extends Activity {
+	private ActivityComponent activityComponent;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		activityComponent = ((RecipeKeeperApp) getApplication()).getApplicationComponent()
+				.newActivityComponent(new ActivityModule(this));
+		activityComponent.injectInto(this);
+	}
+
+	// Getters and setters
+	public ActivityComponent getActivityComponent() {
+		return activityComponent;
+	}
 }

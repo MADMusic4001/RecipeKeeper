@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 MadMusic4001
+ * Copyright (C) 2016 MadInnovations
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,13 +30,20 @@ import javax.inject.Singleton;
  * Implementation of the {@link UnitOfMeasureDao} for maintaining a {@link UnitOfMeasure} in a SQLite database.
  */
 @Singleton
-public class UnitOfMeasureDaoSqlImpl implements BaseDaoSqlImpl, UnitOfMeasureDao {
-	private static abstract class UnitOfMeasureContract implements BaseColumns {
+public class UnitOfMeasureDaoSqlImpl implements BaseDaoSql, UnitOfMeasureDao {
+	public static abstract class UnitOfMeasureContract implements BaseColumns {
 		public static final String TABLE_NAME = "units_of_measure";
 		public static final String SINGULAR_NAME_COLUMN_NAME = "singular_name";
 		public static final String PLURAL_NAME_COLUMN_NAME = "plural_name";
 		public static final String NOTES_COLUMN_NAME = "notes_name";
 	}
+	public static final String CREATE_TABLE_UNITS_OF_MEASURE =
+			"CREATE TABLE " + UnitOfMeasureContract.TABLE_NAME + " (" +
+					UnitOfMeasureContract._ID + " INTEGER NOT NULL PRIMARY KEY, " +
+					UnitOfMeasureContract.SINGULAR_NAME_COLUMN_NAME + " TEXT NOT NULL, " +
+					UnitOfMeasureContract.PLURAL_NAME_COLUMN_NAME + " TEXT NOT NULL, " +
+					UnitOfMeasureContract.NOTES_COLUMN_NAME + " TEXT, " +
+					"CONSTRAINT unique_singular_name UNIQUE (" + UnitOfMeasureContract.SINGULAR_NAME_COLUMN_NAME + "));";
 	private RecipeKeeperSqlHelper sqlHelper;
 
 	/**

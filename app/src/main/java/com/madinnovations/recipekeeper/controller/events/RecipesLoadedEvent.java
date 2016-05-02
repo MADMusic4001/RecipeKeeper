@@ -17,21 +17,26 @@ package com.madinnovations.recipekeeper.controller.events;
 
 import com.madinnovations.recipekeeper.model.entities.Recipe;
 
+import java.util.Set;
+
 /**
- * Event indicating a {@link Recipe} was saved
+ * ${CLASS_DESCRIPTION}
+ *
+ * @author Mark
+ * Created 4/30/2016.
  */
-public class RecipeSavedEvent {
-	private boolean success = true;
-	private Recipe recipe;
+public class RecipesLoadedEvent {
+	private boolean success;
+	private Set<Recipe> recipes;
 
 	/**
-	 * Creates a RecipeSavedEvent for the given Recipe.
+	 * Creates a new RecipesLoadedEvent with the given recipes and status.
 	 *
-	 * @param recipe  the Recipe that was saved
-	 * @param success  whether the recipe was successfully saved or not
+	 * @param recipes  a set of Recipe instances
+	 * @param success  true if the Recipe instances were successfully loaded from persistent storage.
 	 */
-	public RecipeSavedEvent(Recipe recipe, boolean success) {
-		this.recipe = recipe;
+	public RecipesLoadedEvent(Set<Recipe> recipes, boolean success) {
+		this.recipes = recipes;
 		this.success = success;
 	}
 
@@ -39,7 +44,7 @@ public class RecipeSavedEvent {
 	public boolean isSuccess() {
 		return success;
 	}
-	public Recipe getRecipe() {
-		return recipe;
+	public Set<Recipe> getRecipes() {
+		return recipes;
 	}
 }

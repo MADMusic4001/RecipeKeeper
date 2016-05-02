@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 MadMusic4001
+ * Copyright (C) 2016 MadInnovations
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,6 @@ import javax.inject.Inject;
 @PerActivity
 public class RecipeListAdapter extends ArrayAdapter<Recipe> {
 	private static final int LAYOUT_RESOURCE_ID = R.layout.recipe_list_row;
-
 	private   LayoutInflater       layoutInflater;
 	private int[] colors = new int[]{
 			R.color.list_even_row_background,
@@ -49,9 +48,9 @@ public class RecipeListAdapter extends ArrayAdapter<Recipe> {
 	 * @param context the view {@code Context} the adapter will be attached to.
 	 */
 	@Inject
-	public RecipeListAdapter(Context context) {
+	public RecipeListAdapter(Context context, LayoutInflater inflater) {
 		super(context, LAYOUT_RESOURCE_ID);
-		layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		layoutInflater = inflater;
 	}
 
 	@Override

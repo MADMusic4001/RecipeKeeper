@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 MadMusic4001
+ * Copyright (C) 2016 MadInnovations
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,18 @@ package com.madinnovations.recipekeeper.controller.eventhandlers;
 
 import android.util.Log;
 
+import com.madinnovations.recipekeeper.controller.events.LoadRecipesEvent;
 import com.madinnovations.recipekeeper.controller.events.RecipeSavedEvent;
+import com.madinnovations.recipekeeper.controller.events.RecipesLoadedEvent;
 import com.madinnovations.recipekeeper.controller.events.SaveRecipeEvent;
 import com.madinnovations.recipekeeper.model.dao.RecipeDao;
+import com.madinnovations.recipekeeper.model.entities.Recipe;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -45,15 +51,27 @@ public class RecipeEventHandler {
 		this.recipeDao = recipeDao;
 	}
 
-	@Subscribe
+	/**
+	 * Processes a request to save a Recipe to persistent storage.
+	 *
+	 * @param event  a SaveRecipeEvent containing the Recipe instance to save
+	 */
+	@Subscribe(threadMode = ThreadMode.ASYNC)
 	public void onSaveRecipeEvent(SaveRecipeEvent event) {
-		Log.d("RecipeEventHandler", "SaveRecipeEvent received.");
+		Log.d("RecipeEventHandler", "SaveRecipeEvent received. " + event);
 		boolean result = recipeDao.save(event.getRecipe());
 		eventBus.post(new RecipeSavedEvent(event.getRecipe(), result));
 	}
 
-	@Subscribe
-	public void onEvent(Object event) {
-		Log.d("RecipeEventHandler", event + " received,");
+	/**
+	 * Processes a request to load Recipe instances from persistent storage.
+	 *
+	 * @param event  a LoadRecipesEvent instance containing a Recipe instance to use as a filter.
+	 */
+	@Subscribe(threadMode = ThreadMode.ASYNC)
+	public void onLoadRecipesEvent(LoadRecipesEvent event) {
+		Log.d("RecipeEventHandler", "LoadRecipesEvent received. " + event);
+		Set<Recipe> results = recipeDao.read(event.getFilter());
+		eventBus.post(new RecipesLoadedEvent(results, results != null));
 	}
 }

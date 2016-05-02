@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 MadMusic4001
+ * Copyright (C) 2014 MadInnovations
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package com.madinnovations.recipekeeper.view.di.components;
 
 import com.madinnovations.recipekeeper.view.di.modules.ActivityModule;
 import com.madinnovations.recipekeeper.view.di.modules.ApplicationModule;
-import com.madinnovations.recipekeeper.view.di.modules.DaoModule;
+import com.madinnovations.recipekeeper.view.di.modules.SqlDaoModule;
 import com.madinnovations.recipekeeper.view.di.modules.EventHandlerModule;
 
 import javax.inject.Singleton;
@@ -29,7 +29,7 @@ import dagger.Component;
  *
  */
 @Singleton
-@Component(modules = {ApplicationModule.class, EventHandlerModule.class, DaoModule.class})
+@Component(modules = {ApplicationModule.class, EventHandlerModule.class, SqlDaoModule.class})
 public interface ApplicationComponent {
 	ActivityComponent newActivityComponent(ActivityModule activityModule);
 }

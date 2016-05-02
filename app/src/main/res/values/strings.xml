@@ -2,6 +2,12 @@
   <string name="app_name">RecipeKeeper</string>
   <string name="default_recipe_name">New Recipe</string>
 
+  <!-- Toasts -->
+  <string name="toast_recipes_loaded">Recipes successfully loaded</string>
+  <string name="toast_recipes_loaded_error">Error loading recipes</string>
+  <string name="toast_recipe_saved">Recipe successfully saved</string>
+  <string name="toast_recipe_saved_error">Error saving recipe</string>
+
   <!-- Widget Labels -->
   <string name="label_categories">Categories</string>
   <string name="label_category">Category</string>

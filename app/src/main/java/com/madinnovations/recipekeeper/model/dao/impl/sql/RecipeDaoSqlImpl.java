@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 MadMusic4001
+ * Copyright (C) 2016 MadInnovations
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package com.madinnovations.recipekeeper.model.dao.impl.sql;
 
 import android.content.ContentValues;
 import android.provider.BaseColumns;
+import android.util.Log;
 
 import com.madinnovations.recipekeeper.model.dao.CategoryDao;
 import com.madinnovations.recipekeeper.model.dao.IngredientDao;
@@ -31,8 +32,8 @@ import java.util.Set;
 /**
  * Implementation of the {@link RecipeDao} for maintaining a {@link Recipe} in a SQLite database.
  */
-public class RecipeDaoSqlImpl implements BaseDaoSqlImpl, RecipeDao {
-	private static abstract class RecipeContract implements BaseColumns {
+public class RecipeDaoSqlImpl implements BaseDaoSql, RecipeDao {
+	public static abstract class RecipeContract implements BaseColumns {
 		public static final String TABLE_NAME = "recipes";
 		public static final String NAME_COLUMN_NAME = "name";
 		public static final String DESCRIPTION_COLUMN_NAME = "description";
@@ -42,11 +43,33 @@ public class RecipeDaoSqlImpl implements BaseDaoSqlImpl, RecipeDao {
 		public static final String CREATED_COLUMN_NAME = "created";
 		public static final String UPDATED_COLUMN_NAME = "updated";
 	}
-	private static abstract class RecipeCategoryContract implements BaseColumns {
+	public static final String CREATE_TABLE_RECIPES =
+		"CREATE TABLE " + RecipeContract.TABLE_NAME + " (" +
+			RecipeContract._ID + " INTEGER NOT NULL PRIMARY KEY, " +
+			RecipeContract.NAME_COLUMN_NAME + " TEXT NOT NULL, " +
+			RecipeContract.DESCRIPTION_COLUMN_NAME + " TEXT, " +
+			RecipeContract.DIRECTIONS_COLUMN_NAME + " TEXT, " +
+			RecipeContract.NOTES_COLUMN_NAME + " TEXT, " +
+			RecipeContract.SOURCE_COLUMN_NAME + " TEXT, " +
+			RecipeContract.CREATED_COLUMN_NAME + " LONG NOT NULL, " +
+			RecipeContract.UPDATED_COLUMN_NAME + " LONG NOT NULL);";
+	public static abstract class RecipeCategoryContract implements BaseColumns {
 		public static final String TABLE_NAME = "recipe_categories";
 		public static final String RECIPE_ID_COLUMN_NAME = "recipe_id";
 		public static final String CATEGORY_ID_COLUMN_NAME = "category_id";
 	}
+	public static final String CREATE_TABLE_RECIPE_CATEGORIES =
+		"CREATE TABLE " + RecipeCategoryContract.TABLE_NAME + " (" +
+			RecipeCategoryContract._ID + " INTEGER NOT NULL, " +
+			RecipeCategoryContract.CATEGORY_ID_COLUMN_NAME + " INTEGER NOT NULL, " +
+			RecipeCategoryContract.RECIPE_ID_COLUMN_NAME + " INTEGER NOT NULL, " +
+			"PRIMARY KEY (" + RecipeCategoryContract.RECIPE_ID_COLUMN_NAME + ", " +
+				RecipeCategoryContract.CATEGORY_ID_COLUMN_NAME + "), " +
+			"CONSTRAINT fk_recipe_category_to_recipe FOREIGN KEY (" + RecipeCategoryContract.RECIPE_ID_COLUMN_NAME + ") " +
+				"REFERENCES " + RecipeContract.TABLE_NAME + " (" + RecipeContract._ID + ") ON DELETE CASCADE, " +
+			"CONSTRAINT fk_recipe_category_to_category FOREIGN KEY (" + RecipeCategoryContract.CATEGORY_ID_COLUMN_NAME + ") " +
+				"REFERENCES " + CategoryDaoSqlImpl.CategoryContract.TABLE_NAME +
+				" (" + CategoryDaoSqlImpl.CategoryContract._ID + ") ON DELETE CASCADE);";
 	private RecipeKeeperSqlHelper sqlHelper;
 	private CategoryDao categoryDao;
 	private IngredientDao ingredientDao;
@@ -67,6 +90,7 @@ public class RecipeDaoSqlImpl implements BaseDaoSqlImpl, RecipeDao {
 
 	@Override
 	public boolean save(Recipe recipe) {
+		Log.d("RecipeDaoSqlImpl", "Saving recipe" + recipe);
 		boolean result;
 		ContentValues values = new ContentValues();
 		values.put(RecipeContract.NAME_COLUMN_NAME, recipe.getName());
@@ -91,8 +115,12 @@ public class RecipeDaoSqlImpl implements BaseDaoSqlImpl, RecipeDao {
 																   new String[]{Long.valueOf(recipe.getId()).toString()});
 				result = (count == 1);
 			}
-			if (result) {
-			}
+//			if (result) {
+//				result = saveIngredients(recipe);
+//				if(result) {
+//					result = saveRecipeCategories(recipe);
+//				}
+//			}
 			if(result) {
 				sqlHelper.getWritableDatabase().setTransactionSuccessful();
 			}
@@ -103,7 +131,7 @@ public class RecipeDaoSqlImpl implements BaseDaoSqlImpl, RecipeDao {
 	}
 
 	private boolean saveIngredients(Recipe recipe) {
-		boolean result = false;
+		boolean result;
 		// Delete existing ingredients for this recipe from the database
 		Ingredient ingredientFilter = new Ingredient();
 		ingredientFilter.setParent(recipe);
@@ -113,8 +141,9 @@ public class RecipeDaoSqlImpl implements BaseDaoSqlImpl, RecipeDao {
 			for (Ingredient ingredient : recipe.getIngredients()) {
 				ingredient.setId(DataConstants.UNINITIALIZED);
 				ingredient.setParent(recipe);
-				result &= ingredientDao.save(ingredient);
+				result = ingredientDao.save(ingredient);
 				if(!result) {
+					Log.d("RecipeDaoSqlImpl", "Save ingredients failed");
 					break;
 				}
 			}
@@ -123,12 +152,12 @@ public class RecipeDaoSqlImpl implements BaseDaoSqlImpl, RecipeDao {
 	}
 
 	private boolean saveRecipeCategories(Recipe recipe) {
-		boolean result = false;
-		sqlHelper.getWritableDatabase().delete(RecipeCategoryContract.TABLE_NAME,
-			WHERE + SPACE + RecipeCategoryContract.RECIPE_ID_COLUMN_NAME + EQUALS + PLACEHOLDER,
-			new String[] {Long.valueOf(recipe.getId()).toString()});
+		boolean result = true;
+		result = (sqlHelper.getWritableDatabase().delete(RecipeCategoryContract.TABLE_NAME,
+			RecipeCategoryContract.RECIPE_ID_COLUMN_NAME + EQUALS + PLACEHOLDER,
+			new String[] {Long.valueOf(recipe.getId()).toString()}) >= 0);
 		for(Category category : recipe.getCategories()) {
-			result &= saveRecipeCategory(recipe, category);
+			result = saveRecipeCategory(recipe, category);
 			if(!result) {
 				break;
 			}
@@ -137,12 +166,13 @@ public class RecipeDaoSqlImpl implements BaseDaoSqlImpl, RecipeDao {
 	}
 
 	private boolean saveRecipeCategory(Recipe recipe, Category category) {
+		Log.d("RecipeDaoSqlImpl", "Saving recipe category");
 		boolean result = false;
 		ContentValues values = new ContentValues();
 		values.put(RecipeCategoryContract.RECIPE_ID_COLUMN_NAME, recipe.getId());
 		values.put(RecipeCategoryContract.CATEGORY_ID_COLUMN_NAME, category.getId());
 
-		sqlHelper.getWritableDatabase().insert(RecipeCategoryContract.TABLE_NAME, null, values);
+		result = (sqlHelper.getWritableDatabase().insert(RecipeCategoryContract.TABLE_NAME, null, values) != -1);
 		return result;
 	}
 	@Override
@@ -152,6 +182,14 @@ public class RecipeDaoSqlImpl implements BaseDaoSqlImpl, RecipeDao {
 
 	@Override
 	public Set<Recipe> read(Recipe filter) {
+
+		sqlHelper.getWritableDatabase().beginTransactionNonExclusive();
+		try {
+			sqlHelper.getWritableDatabase().query(RecipeContract.TABLE_NAME, )
+		}
+		finally {
+			sqlHelper.getWritableDatabase().endTransaction();
+		}
 		return null;
 	}
 

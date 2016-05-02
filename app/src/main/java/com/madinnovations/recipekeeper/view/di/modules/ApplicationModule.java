@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 MadMusic4001
+ * Copyright (C) 2015 MadInnovations
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v4.content.LocalBroadcastManager;
+import android.view.LayoutInflater;
 
 import com.madinnovations.recipekeeper.view.RecipeKeeperApp;
 
@@ -91,5 +92,10 @@ public class ApplicationModule {
 	@Provides @Singleton
 	EventBus provideEventBus() {
 		return new EventBus();
+	}
+
+	@Provides @Singleton
+	LayoutInflater provideLayoutInflater(Context context) {
+		return (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 }

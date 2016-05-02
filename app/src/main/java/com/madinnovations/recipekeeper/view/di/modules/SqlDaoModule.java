@@ -7,7 +7,7 @@ import com.madinnovations.recipekeeper.model.dao.IngredientDao;
 import com.madinnovations.recipekeeper.model.dao.RecipeDao;
 import com.madinnovations.recipekeeper.model.dao.UnitOfMeasureDao;
 import com.madinnovations.recipekeeper.model.dao.impl.sql.CategoryDaoSqlImpl;
-import com.madinnovations.recipekeeper.model.dao.impl.sql.IngredientDaoSqlImp;
+import com.madinnovations.recipekeeper.model.dao.impl.sql.IngredientDaoSqlImpl;
 import com.madinnovations.recipekeeper.model.dao.impl.sql.RecipeDaoSqlImpl;
 import com.madinnovations.recipekeeper.model.dao.impl.sql.RecipeKeeperSqlHelper;
 import com.madinnovations.recipekeeper.model.dao.impl.sql.UnitOfMeasureDaoSqlImpl;
@@ -19,10 +19,11 @@ import dagger.Module;
 import dagger.Provides;
 
 /**
- * Class used by Dagger dependency injection framework to provide instances of DAO classes to inject into classes that depend on them.
+ * Class used by Dagger dependency injection framework to provide instances of DAO classes to inject into classes that depend on
+ * them.
  */
 @Module(includes = ApplicationModule.class)
-public class DaoModule {
+public class SqlDaoModule {
     /**
      * Creates a {@link RecipeKeeperSqlHelper} instance.
      *
@@ -64,7 +65,7 @@ public class DaoModule {
      */
     @Provides @Singleton
     public IngredientDao provideIngredientDao(RecipeKeeperSqlHelper sqlHelper) {
-        return new IngredientDaoSqlImp(sqlHelper);
+        return new IngredientDaoSqlImpl(sqlHelper);
     }
 
     /**

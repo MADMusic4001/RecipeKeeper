@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 MadMusic4001
+ * Copyright (C) 2016 MadInnovations
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package com.madinnovations.recipekeeper.model.dao.impl.sql;
 /**
  * Interface declaring commonly used SQL string constants
  */
-public interface BaseDaoSqlImpl {
+public interface BaseDaoSql {
 	public static final String SPACE = " ";
 	public static final String SELECT = "select";
 	public static final String INSERT = "insert";
@@ -28,5 +28,6 @@ public interface BaseDaoSqlImpl {
 	public static final String WHERE = "where";
 	public static final String EQUALS = "=";
 	public static final String NOT = "!";
+	public static final String AND = "and";
 	public static final String PLACEHOLDER = "?";
 }

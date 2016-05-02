@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 MadInnovations
+ * Copyright (C) 2016 MadInnovations
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.madinnovations.recipekeeper.view.di;
+package com.madinnovations.recipekeeper.controller.events;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
-import javax.inject.Scope;
+import com.madinnovations.recipekeeper.model.entities.Recipe;
 
 /**
- * Annotation to indicate a class should only be instantiated once
- * per application lifetime.
+ * ${CLASS_DESCRIPTION}
  *
- * Created 7/5/2015.
+ * @author Mark
+ * Created 4/30/2016.
  */
-@Scope
-@Retention(RetentionPolicy.RUNTIME)
-public @interface PerApplication {
+public class LoadRecipesEvent {
+	private Recipe filter;
+
+	/**
+	 * Creates a new LoadRecipesEvent with the given Recipe to be used to filter results.
+	 *
+	 * @param filter  a Recipe instance to use as a filter
+	 */
+	public LoadRecipesEvent(Recipe filter) {
+		this.filter = filter;
+	}
+
+	// Getters
+	public Recipe getFilter() {
+		return filter;
+	}
 }

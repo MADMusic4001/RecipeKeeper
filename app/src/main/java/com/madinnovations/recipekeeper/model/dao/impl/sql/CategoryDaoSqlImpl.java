@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 MadMusic4001
+ * Copyright (C) 2016 MadInnovations
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,12 +30,18 @@ import javax.inject.Singleton;
  * Implementation of the {@link CategoryDao} for maintaining a {@link Category} in a SQLite database.
  */
 @Singleton
-public class CategoryDaoSqlImpl implements BaseDaoSqlImpl, CategoryDao {
-	private static abstract class CategoryContract implements BaseColumns {
+public class CategoryDaoSqlImpl implements BaseDaoSql, CategoryDao {
+	public static abstract class CategoryContract implements BaseColumns {
 		public static final String TABLE_NAME = "categories";
 		public static final String NAME_COLUMN_NAME = "name";
 		public static final String DESCRIPTION_COLUMN_NAME = "description";
 	}
+	public static final String CREATE_TABLE_CATEGORIES =
+			"CREATE TABLE " + CategoryContract.TABLE_NAME + " (" +
+					CategoryContract._ID + " INTEGER NOT NULL PRIMARY KEY, " +
+					CategoryContract.NAME_COLUMN_NAME + " TEXT NOT NULL, " +
+					CategoryContract.DESCRIPTION_COLUMN_NAME + " TEXT, " +
+					"CONSTRAINT unique_category_name UNIQUE (" + CategoryContract.NAME_COLUMN_NAME + "));";
 	private RecipeKeeperSqlHelper sqlHelper;
 
 	/**

@@ -1,6 +1,8 @@
 package com.madinnovations.recipekeeper.model.dao.impl.json;
 
 import com.google.gson.Gson;
+import com.madinnovations.recipekeeper.model.dao.CategoryDao;
+import com.madinnovations.recipekeeper.model.dao.IngredientDao;
 import com.madinnovations.recipekeeper.model.dao.RecipeDao;
 import com.madinnovations.recipekeeper.model.entities.Recipe;
 import com.madinnovations.recipekeeper.model.utils.DataConstants;
@@ -13,14 +15,21 @@ import java.util.Set;
 public class RecipeDaoJsonImpl implements BaseDaoJson, RecipeDao {
     private static final String DIR_NAME = "recipes";
     private RecipeKeeperFileHelper fileHelper;
+    private CategoryDao categoryDao;
+    private IngredientDao ingredientDao;
 
     /**
      * Creates a RecipeDaoJsonImpl instance with the given {@link RecipeKeeperFileHelper} dependency instance.
      *
      * @param fileHelper  the RecipeKeeperFileHelper instance to use
+	 * @param categoryDao  a CategoryDao instance
+	 * @param ingredientDao   an IngredientDao instance
      */
-    public RecipeDaoJsonImpl(RecipeKeeperFileHelper fileHelper) {
+    public RecipeDaoJsonImpl(RecipeKeeperFileHelper fileHelper, CategoryDao categoryDao,
+                             IngredientDao ingredientDao) {
         this.fileHelper = fileHelper;
+        this.categoryDao = categoryDao;
+        this.ingredientDao = ingredientDao;
     }
 
     @Override
