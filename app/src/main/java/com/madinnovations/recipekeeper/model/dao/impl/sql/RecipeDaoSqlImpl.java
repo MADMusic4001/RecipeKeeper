@@ -16,6 +16,7 @@
 package com.madinnovations.recipekeeper.model.dao.impl.sql;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.provider.BaseColumns;
 import android.util.Log;
 
@@ -27,7 +28,13 @@ import com.madinnovations.recipekeeper.model.entities.Ingredient;
 import com.madinnovations.recipekeeper.model.entities.Recipe;
 import com.madinnovations.recipekeeper.model.utils.DataConstants;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Implementation of the {@link RecipeDao} for maintaining a {@link Recipe} in a SQLite database.
@@ -58,6 +65,18 @@ public class RecipeDaoSqlImpl implements BaseDaoSql, RecipeDao {
 		public static final String RECIPE_ID_COLUMN_NAME = "recipe_id";
 		public static final String CATEGORY_ID_COLUMN_NAME = "category_id";
 	}
+	private static final String [] RECIPE_COLUMNS = {RecipeContract._ID, RecipeContract.NAME_COLUMN_NAME,
+		RecipeContract.DIRECTIONS_COLUMN_NAME, RecipeContract.DESCRIPTION_COLUMN_NAME,
+		RecipeContract.NOTES_COLUMN_NAME, RecipeContract.SOURCE_COLUMN_NAME,
+		RecipeContract.CREATED_COLUMN_NAME, RecipeContract.UPDATED_COLUMN_NAME};
+	private static final int      ID_INDEX          = 0;
+	private static final int      NAME_INDEX        = 1;
+	private static final int      DIRECTIONS_INDEX  = 2;
+	private static final int      DESCRIPTION_INDEX = 3;
+	private static final int      NOTES_INDEX       = 4;
+	private static final int      SOURCE_INDEX      = 5;
+	private static final int      CREATED_INDEX     = 6;
+	private static final int      UPDATED_INDEX     = 7;
 	public static final String CREATE_TABLE_RECIPE_CATEGORIES =
 		"CREATE TABLE " + RecipeCategoryContract.TABLE_NAME + " (" +
 			RecipeCategoryContract._ID + " INTEGER NOT NULL, " +
@@ -70,6 +89,8 @@ public class RecipeDaoSqlImpl implements BaseDaoSql, RecipeDao {
 			"CONSTRAINT fk_recipe_category_to_category FOREIGN KEY (" + RecipeCategoryContract.CATEGORY_ID_COLUMN_NAME + ") " +
 				"REFERENCES " + CategoryDaoSqlImpl.CategoryContract.TABLE_NAME +
 				" (" + CategoryDaoSqlImpl.CategoryContract._ID + ") ON DELETE CASCADE);";
+	public static final String[] RECIPE_CATEGORY_COLUMNS = {RecipeCategoryContract._ID,
+		RecipeCategoryContract.RECIPE_ID_COLUMN_NAME, RecipeCategoryContract.CATEGORY_ID_COLUMN_NAME};
 	private RecipeKeeperSqlHelper sqlHelper;
 	private CategoryDao categoryDao;
 	private IngredientDao ingredientDao;
@@ -115,12 +136,12 @@ public class RecipeDaoSqlImpl implements BaseDaoSql, RecipeDao {
 																   new String[]{Long.valueOf(recipe.getId()).toString()});
 				result = (count == 1);
 			}
-//			if (result) {
-//				result = saveIngredients(recipe);
-//				if(result) {
-//					result = saveRecipeCategories(recipe);
-//				}
-//			}
+			if (result) {
+				result = saveIngredients(recipe);
+				if(result) {
+					result = saveRecipeCategories(recipe);
+				}
+			}
 			if(result) {
 				sqlHelper.getWritableDatabase().setTransactionSuccessful();
 			}
@@ -182,19 +203,110 @@ public class RecipeDaoSqlImpl implements BaseDaoSql, RecipeDao {
 
 	@Override
 	public Set<Recipe> read(Recipe filter) {
+		Log.d("RecipeDaoSqlImpl", "Reading recipes filtered by " + filter);
+		Set<Recipe> result = new HashSet<>();
+		List<String> whereArgsList = new ArrayList<>();
+		String whereClause = buildWhereArgs(filter, whereArgsList);
+		String[] whereArgs = new String[whereArgsList.size()];
+		Log.d("RecipeDaoSqlImpl", "where clause = " + whereClause);
+		Log.d("RecipeDaoSqlImpl", "where args " + whereArgsList);
 
 		sqlHelper.getWritableDatabase().beginTransactionNonExclusive();
 		try {
-			sqlHelper.getWritableDatabase().query(RecipeContract.TABLE_NAME, )
+			Cursor cursor = sqlHelper.getWritableDatabase().query(RecipeContract.TABLE_NAME, RECIPE_COLUMNS, whereClause,
+																  whereArgsList.toArray(whereArgs), null, null, null, null);
+			Log.d("RecipeDaoSqlImpl", "Cursor count = " + cursor.getCount());
+			cursor.moveToFirst();
+			while(!cursor.isAfterLast()) {
+				Recipe aRecipe = createRecipeInstance(cursor);
+				result.add(aRecipe);
+			}
+			cursor.close();
 		}
 		finally {
 			sqlHelper.getWritableDatabase().endTransaction();
 		}
-		return null;
+		Log.d("RecipeDaoSqlImpl", "Loaded " + result);
+		return result;
 	}
 
 	@Override
 	public Recipe read(int id) {
 		return null;
+	}
+
+	private String buildWhereArgs(Recipe filter, Collection<String> args) {
+		boolean isFirst = true;
+		String whereClause = "";
+		if(filter != null) {
+			if(filter.getId() != DataConstants.UNINITIALIZED) {
+				whereClause = addFilter(whereClause, RecipeContract._ID, Long.valueOf(filter.getId()).toString(), isFirst, args);
+				isFirst = false;
+			}
+			if(filter.getName() != null && !filter.getName().isEmpty()) {
+				whereClause = addFilter(whereClause, RecipeContract.NAME_COLUMN_NAME, filter.getName(), isFirst, args);
+				isFirst = false;
+			}
+			if(filter.getDescription() != null && !filter.getDescription().isEmpty()) {
+				whereClause = addFilter(whereClause, RecipeContract.DESCRIPTION_COLUMN_NAME, filter.getDescription(), isFirst,
+										args);
+				isFirst = false;
+			}
+			if(filter.getDirections() != null && !filter.getDirections().isEmpty()) {
+				whereClause = addFilter(whereClause, RecipeContract.DIRECTIONS_COLUMN_NAME, filter.getDirections(), isFirst,
+										args);
+				isFirst = false;
+			}
+			if(filter.getNotes() != null && !filter.getNotes().isEmpty()) {
+				whereClause = addFilter(whereClause, RecipeContract.NOTES_COLUMN_NAME, filter.getNotes(), isFirst,
+										args);
+				isFirst = false;
+			}
+			if(filter.getSource() != null && !filter.getSource().isEmpty()) {
+				whereClause = addFilter(whereClause, RecipeContract.SOURCE_COLUMN_NAME, filter.getSource(), isFirst,
+										args);
+				isFirst = false;
+			}
+			if(filter.getCreated() != null) {
+				whereClause = addFilter(whereClause, RecipeContract.CREATED_COLUMN_NAME,
+										Long.valueOf(filter.getCreated().getTimeInMillis()).toString(), isFirst, args);
+				isFirst = false;
+			}
+			if(filter.getUpdated() != null) {
+				whereClause = addFilter(whereClause, RecipeContract.UPDATED_COLUMN_NAME,
+										Long.valueOf(filter.getUpdated().getTimeInMillis()).toString(), isFirst, args);
+				isFirst = false;
+			}
+		}
+		return whereClause;
+	}
+
+	private String addFilter(String whereClause, String fieldName, String value, boolean isFirst, Collection<String> args) {
+		if(!isFirst) {
+			whereClause = whereClause + AND + SPACE;
+		}
+		whereClause = whereClause + fieldName + EQUALS + PLACEHOLDER;
+		args.add(value);
+		return whereClause;
+	}
+
+	private Recipe createRecipeInstance(Cursor cursor) {
+		Calendar calendar;
+
+		Recipe aRecipe = new Recipe();
+		aRecipe.setId(cursor.getLong(ID_INDEX));
+		aRecipe.setName(cursor.getString(NAME_INDEX));
+		aRecipe.setDirections(cursor.getString(DIRECTIONS_INDEX));
+		aRecipe.setDescription(cursor.getString(DESCRIPTION_INDEX));
+		aRecipe.setNotes(cursor.getString(NOTES_INDEX));
+		aRecipe.setSource(cursor.getString(SOURCE_INDEX));
+		calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(cursor.getLong(CREATED_INDEX));
+		aRecipe.setCreated(calendar);
+		calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(cursor.getLong(UPDATED_INDEX));
+		aRecipe.setUpdated(calendar);
+
+		return aRecipe;
 	}
 }

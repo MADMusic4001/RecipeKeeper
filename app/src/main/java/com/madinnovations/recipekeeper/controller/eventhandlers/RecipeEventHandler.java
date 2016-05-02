@@ -72,6 +72,7 @@ public class RecipeEventHandler {
 	public void onLoadRecipesEvent(LoadRecipesEvent event) {
 		Log.d("RecipeEventHandler", "LoadRecipesEvent received. " + event);
 		Set<Recipe> results = recipeDao.read(event.getFilter());
+		Log.d("RecipeEventHandler", "LoadRecipesEvent results = " + results);
 		eventBus.post(new RecipesLoadedEvent(results, results != null));
 	}
 }
