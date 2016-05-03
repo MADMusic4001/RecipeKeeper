@@ -20,10 +20,7 @@ import com.madinnovations.recipekeeper.model.entities.Recipe;
 import java.util.Set;
 
 /**
- * ${CLASS_DESCRIPTION}
- *
- * @author Mark
- * Created 4/30/2016.
+ * Event indicating Recipes have been loaded from persistent storage.
  */
 public class RecipesLoadedEvent {
 	private boolean success;

@@ -19,13 +19,26 @@ package com.madinnovations.recipekeeper.model.dao.impl.sql;
  * Interface declaring commonly used SQL string constants
  */
 public interface BaseDaoSql {
+	public static final String CREATE_TABLE = "CREATE TABLE ";
+	public static final String TEXT = " TEXT ";
+	public static final String INTEGER = " INTEGER ";
+	public static final String REAL = " REAL ";
+	public static final String NOT_NULL = " NOT NULL ";
+	public static final String PRIMARY_KEY = " PRIMARY KEY ";
+	public static final String FOREIGN_KEY = " FOREIGN KEY ";
+	public static final String COMMA = ",";
 	public static final String SPACE = " ";
-	public static final String SELECT = "select";
-	public static final String INSERT = "insert";
-	public static final String UPDATE = "update";
-	public static final String DELETE = "delete";
-	public static final String FROM = "from";
-	public static final String WHERE = "where";
+	public static final String CONSTRAINT = "CONSTRAINT ";
+	public static final String REFERENCES = "REFERENCES ";
+	public static final String SELECT = "SELECT";
+	public static final String INSERT = "INSERT";
+	public static final String UPDATE = "UPDATE";
+	public static final String DELETE = "DELETE";
+	public static final String FROM = "FROM";
+	public static final String WHERE = "WHERE";
+	public static final String ON = " ON ";
+	public static final String RESTRICT = " RESTRICT ";
+	public static final String CASCADE = " CASCADE ";
 	public static final String EQUALS = "=";
 	public static final String NOT = "!";
 	public static final String AND = "and";

@@ -16,13 +16,12 @@
 package com.madinnovations.recipekeeper.view.activities.recipesList;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 
 import com.madinnovations.recipekeeper.R;
 import com.madinnovations.recipekeeper.controller.eventhandlers.RecipeEventHandler;
-import com.madinnovations.recipekeeper.model.entities.Recipe;
+import com.madinnovations.recipekeeper.controller.events.RecipeSelectedEvent;
 import com.madinnovations.recipekeeper.model.utils.IntentConstants;
 import com.madinnovations.recipekeeper.view.RecipeKeeperApp;
 import com.madinnovations.recipekeeper.view.activities.recipeDetail.RecipeDetailActivity;
@@ -31,27 +30,37 @@ import com.madinnovations.recipekeeper.view.di.components.ActivityComponent;
 import com.madinnovations.recipekeeper.view.di.modules.ActivityModule;
 
 import org.greenrobot.eventbus.EventBus;
-
-import java.util.Collection;
-import java.util.Comparator;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import javax.inject.Inject;
 
 /**
- * ${CLASS_DESCRIPTION}
- *
- * @author Mark
- * Created 4/23/2016.
+ * Activity to create and manage the Recipe list UI
  */
-public class RecipesListActivity extends Activity implements
-		RecipesListFragment.OnRecipesListEventsListener {
+public class RecipesListActivity extends Activity {
 	@Inject
 	protected RecipeEventHandler recipeEventHandler;
 	@Inject
 	protected EventBus eventBus;
 	private ActivityComponent    activityComponent;
 	private RecipeDetailFragment detailFragment;
-	private boolean              isDualPane;
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if(eventBus != null && !eventBus.isRegistered(this)) {
+			eventBus.register(this);
+		}
+	}
+
+	@Override
+	protected void onPause() {
+		if(eventBus != null) {
+			eventBus.unregister(this);
+		}
+		super.onPause();
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,20 +69,22 @@ public class RecipesListActivity extends Activity implements
 		activityComponent = ((RecipeKeeperApp) getApplication()).getApplicationComponent()
 				.newActivityComponent(new ActivityModule(this));
 		activityComponent.injectInto(this);
-//		eventBus.register(recipeEventHandler);
+		if(!eventBus.isRegistered(this)) {
+			eventBus.register(this);
+		}
 		setContentView(R.layout.recipes_list);
 
 		detailFragment = (RecipeDetailFragment)getFragmentManager().findFragmentById(R.id.recipe_detail_framgent);
 	}
 
-	@Override
-	public void onRecipeSelected(Recipe recipe) {
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void onRecipeSelected(RecipeSelectedEvent event) {
 		if(detailFragment == null) {
-			detailFragment.setRecipe(recipe);
+			detailFragment.setRecipe(event.getRecipe());
 		}
 		else {
 			Intent intent = new Intent(getApplicationContext(), RecipeDetailActivity.class);
-			intent.putExtra(IntentConstants.RECIPE_DETAIL_INTENT_RECIPE_ID, recipe.getId());
+			intent.putExtra(IntentConstants.RECIPE_DETAIL_INTENT_RECIPE_ID, event.getRecipe().getId());
 			startActivity(intent);
 		}
 	}

@@ -18,7 +18,6 @@ package com.madinnovations.recipekeeper.view.di.modules;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 
 import com.madinnovations.recipekeeper.view.RecipeKeeperApp;
@@ -32,10 +31,7 @@ import dagger.Module;
 import dagger.Provides;
 
 /**
- * ${CLASS_DESCRIPTION}
- *
- * @author Mark
- *         Created 7/2/2015.
+ * Dependency injection module for application level instances.
  */
 @Module
 public class ApplicationModule {

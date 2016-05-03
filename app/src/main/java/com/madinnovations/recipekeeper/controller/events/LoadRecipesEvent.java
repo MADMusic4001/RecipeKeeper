@@ -18,10 +18,7 @@ package com.madinnovations.recipekeeper.controller.events;
 import com.madinnovations.recipekeeper.model.entities.Recipe;
 
 /**
- * ${CLASS_DESCRIPTION}
- *
- * @author Mark
- * Created 4/30/2016.
+ * Event requesting that Recipes be loaded from persistent storage.
  */
 public class LoadRecipesEvent {
 	private Recipe filter;

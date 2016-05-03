@@ -34,7 +34,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Implementation of the {@link RecipeDao} for maintaining a {@link Recipe} in a SQLite database.
@@ -65,10 +64,15 @@ public class RecipeDaoSqlImpl implements BaseDaoSql, RecipeDao {
 		public static final String RECIPE_ID_COLUMN_NAME = "recipe_id";
 		public static final String CATEGORY_ID_COLUMN_NAME = "category_id";
 	}
-	private static final String [] RECIPE_COLUMNS = {RecipeContract._ID, RecipeContract.NAME_COLUMN_NAME,
-		RecipeContract.DIRECTIONS_COLUMN_NAME, RecipeContract.DESCRIPTION_COLUMN_NAME,
-		RecipeContract.NOTES_COLUMN_NAME, RecipeContract.SOURCE_COLUMN_NAME,
-		RecipeContract.CREATED_COLUMN_NAME, RecipeContract.UPDATED_COLUMN_NAME};
+	private static final String [] RECIPE_COLUMNS = {
+			RecipeContract._ID,
+			RecipeContract.NAME_COLUMN_NAME,
+			RecipeContract.DIRECTIONS_COLUMN_NAME,
+			RecipeContract.DESCRIPTION_COLUMN_NAME,
+			RecipeContract.NOTES_COLUMN_NAME,
+			RecipeContract.SOURCE_COLUMN_NAME,
+			RecipeContract.CREATED_COLUMN_NAME,
+			RecipeContract.UPDATED_COLUMN_NAME};
 	private static final int      ID_INDEX          = 0;
 	private static final int      NAME_INDEX        = 1;
 	private static final int      DIRECTIONS_INDEX  = 2;
@@ -89,8 +93,10 @@ public class RecipeDaoSqlImpl implements BaseDaoSql, RecipeDao {
 			"CONSTRAINT fk_recipe_category_to_category FOREIGN KEY (" + RecipeCategoryContract.CATEGORY_ID_COLUMN_NAME + ") " +
 				"REFERENCES " + CategoryDaoSqlImpl.CategoryContract.TABLE_NAME +
 				" (" + CategoryDaoSqlImpl.CategoryContract._ID + ") ON DELETE CASCADE);";
-	public static final String[] RECIPE_CATEGORY_COLUMNS = {RecipeCategoryContract._ID,
-		RecipeCategoryContract.RECIPE_ID_COLUMN_NAME, RecipeCategoryContract.CATEGORY_ID_COLUMN_NAME};
+	public static final String[] RECIPE_CATEGORY_COLUMNS = {
+			RecipeCategoryContract._ID,
+			RecipeCategoryContract.RECIPE_ID_COLUMN_NAME,
+			RecipeCategoryContract.CATEGORY_ID_COLUMN_NAME};
 	private RecipeKeeperSqlHelper sqlHelper;
 	private CategoryDao categoryDao;
 	private IngredientDao ingredientDao;
@@ -164,7 +170,6 @@ public class RecipeDaoSqlImpl implements BaseDaoSql, RecipeDao {
 				ingredient.setParent(recipe);
 				result = ingredientDao.save(ingredient);
 				if(!result) {
-					Log.d("RecipeDaoSqlImpl", "Save ingredients failed");
 					break;
 				}
 			}
@@ -173,7 +178,7 @@ public class RecipeDaoSqlImpl implements BaseDaoSql, RecipeDao {
 	}
 
 	private boolean saveRecipeCategories(Recipe recipe) {
-		boolean result = true;
+		boolean result;
 		result = (sqlHelper.getWritableDatabase().delete(RecipeCategoryContract.TABLE_NAME,
 			RecipeCategoryContract.RECIPE_ID_COLUMN_NAME + EQUALS + PLACEHOLDER,
 			new String[] {Long.valueOf(recipe.getId()).toString()}) >= 0);
@@ -188,7 +193,7 @@ public class RecipeDaoSqlImpl implements BaseDaoSql, RecipeDao {
 
 	private boolean saveRecipeCategory(Recipe recipe, Category category) {
 		Log.d("RecipeDaoSqlImpl", "Saving recipe category");
-		boolean result = false;
+		boolean result;
 		ContentValues values = new ContentValues();
 		values.put(RecipeCategoryContract.RECIPE_ID_COLUMN_NAME, recipe.getId());
 		values.put(RecipeCategoryContract.CATEGORY_ID_COLUMN_NAME, category.getId());
@@ -197,8 +202,23 @@ public class RecipeDaoSqlImpl implements BaseDaoSql, RecipeDao {
 		return result;
 	}
 	@Override
-	public boolean delete(Recipe recipe) {
-		return false;
+	public boolean delete(Recipe filter) {
+		Log.d("RecipeDaoSqlImpl", "Deleting recipes using filter " + filter);
+		boolean result = false;
+		List<String> whereArgsList = new ArrayList<>();
+		String whereClause = buildWhereArgs(filter, whereArgsList);
+		String[] whereArgs = new String[whereArgsList.size()];
+
+		sqlHelper.getWritableDatabase().beginTransactionNonExclusive();
+		try {
+			result = (sqlHelper.getWritableDatabase().delete(RecipeContract.TABLE_NAME, whereClause, whereArgsList.toArray(whereArgs)) >= 0);
+			sqlHelper.getWritableDatabase().setTransactionSuccessful();
+		}
+		finally {
+			sqlHelper.getWritableDatabase().endTransaction();
+		}
+		Log.d("RecipeDaoSqlImpl", "Delete " + (result ? "succeeded" : "failed"));
+		return result;
 	}
 
 	@Override
@@ -208,20 +228,18 @@ public class RecipeDaoSqlImpl implements BaseDaoSql, RecipeDao {
 		List<String> whereArgsList = new ArrayList<>();
 		String whereClause = buildWhereArgs(filter, whereArgsList);
 		String[] whereArgs = new String[whereArgsList.size()];
-		Log.d("RecipeDaoSqlImpl", "where clause = " + whereClause);
-		Log.d("RecipeDaoSqlImpl", "where args " + whereArgsList);
 
 		sqlHelper.getWritableDatabase().beginTransactionNonExclusive();
 		try {
 			Cursor cursor = sqlHelper.getWritableDatabase().query(RecipeContract.TABLE_NAME, RECIPE_COLUMNS, whereClause,
 																  whereArgsList.toArray(whereArgs), null, null, null, null);
-			Log.d("RecipeDaoSqlImpl", "Cursor count = " + cursor.getCount());
 			cursor.moveToFirst();
 			while(!cursor.isAfterLast()) {
 				Recipe aRecipe = createRecipeInstance(cursor);
 				result.add(aRecipe);
 			}
 			cursor.close();
+			sqlHelper.getWritableDatabase().setTransactionSuccessful();
 		}
 		finally {
 			sqlHelper.getWritableDatabase().endTransaction();
@@ -232,7 +250,27 @@ public class RecipeDaoSqlImpl implements BaseDaoSql, RecipeDao {
 
 	@Override
 	public Recipe read(int id) {
-		return null;
+		Log.d("RecipeDaoSqlImpl", "Reading recipe for id = " + id);
+		Recipe result = null;
+		String whereClause = RecipeContract._ID + EQUALS + PLACEHOLDER;
+		String[] whereArgs = new String[1];
+		whereArgs[0] = Long.valueOf(id).toString();
+
+		sqlHelper.getWritableDatabase().beginTransactionNonExclusive();
+		try {
+			Cursor cursor = sqlHelper.getWritableDatabase().query(true, RecipeContract.TABLE_NAME, RECIPE_COLUMNS, whereClause,
+					whereArgs, null, null, null, null);
+			if(cursor.moveToFirst()) {
+				result = createRecipeInstance(cursor);
+			}
+			cursor.close();
+			sqlHelper.getWritableDatabase().setTransactionSuccessful();
+		}
+		finally {
+			sqlHelper.getWritableDatabase().endTransaction();
+		}
+		Log.d("RecipeDaoSqlImpl", "Loaded " + result);
+		return result;
 	}
 
 	private String buildWhereArgs(Recipe filter, Collection<String> args) {

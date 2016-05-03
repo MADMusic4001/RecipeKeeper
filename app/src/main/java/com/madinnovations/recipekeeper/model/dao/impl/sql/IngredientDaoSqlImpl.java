@@ -16,15 +16,21 @@
 package com.madinnovations.recipekeeper.model.dao.impl.sql;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.madinnovations.recipekeeper.model.dao.IngredientDao;
 import com.madinnovations.recipekeeper.model.entities.Ingredient;
+import com.madinnovations.recipekeeper.model.entities.Recipe;
 import com.madinnovations.recipekeeper.model.utils.DataConstants;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -39,18 +45,29 @@ public class IngredientDaoSqlImpl implements BaseDaoSql, IngredientDao {
 		public static final String RECIPE_ID_COLUMN_NAME = "recipe_id";
 	}
 	public static final String CREATE_TABLE_INGREDIENTS =
-			"CREATE TABLE " + IngredientContract.TABLE_NAME + " (" +
-				IngredientContract._ID + " INTEGER NOT NULL PRIMARY KEY, " +
-				IngredientContract.NAME_COLUMN_NAME + " TEXT NOT NULL, " +
-				IngredientContract.VALUE_COLUMN_NAME + " REAL NOT NULL, " +
-				IngredientContract.UOM_ID_COLUMN_NAME + " INTEGER NOT NULL, " +
-				IngredientContract.RECIPE_ID_COLUMN_NAME + " INTEGER NOT NULL, " +
-				"CONSTRAINT fk_ingredient_to_uom FOREIGN KEY (" + IngredientContract.UOM_ID_COLUMN_NAME + ") " +
-					"REFERENCES " + UnitOfMeasureDaoSqlImpl.UnitOfMeasureContract.TABLE_NAME +
-					" (" +UnitOfMeasureDaoSqlImpl.UnitOfMeasureContract._ID + ") ON DELETE RESTRICT, " +
-				"CONSTRAINT fk_ingredient_to_recipe FOREIGN KEY (" + IngredientContract.RECIPE_ID_COLUMN_NAME + ") " +
-					"REFERENCES " + RecipeDaoSqlImpl.RecipeContract.TABLE_NAME +
-					" (" + RecipeDaoSqlImpl.RecipeContract._ID + ") ON DELETE CASCADE);";
+			CREATE_TABLE + IngredientContract.TABLE_NAME + " (" +
+				IngredientContract._ID + INTEGER + NOT_NULL + PRIMARY_KEY + COMMA +
+				IngredientContract.NAME_COLUMN_NAME + TEXT + NOT_NULL + COMMA +
+				IngredientContract.VALUE_COLUMN_NAME + TEXT + NOT_NULL + COMMA +
+				IngredientContract.UOM_ID_COLUMN_NAME + INTEGER + NOT_NULL + COMMA +
+				IngredientContract.RECIPE_ID_COLUMN_NAME + INTEGER + NOT_NULL + COMMA +
+				CONSTRAINT + "fk_ingredient_to_uom" + FOREIGN_KEY + "(" + IngredientContract.UOM_ID_COLUMN_NAME + ") " +
+					REFERENCES + UnitOfMeasureDaoSqlImpl.UnitOfMeasureContract.TABLE_NAME +
+					" (" +UnitOfMeasureDaoSqlImpl.UnitOfMeasureContract._ID + ")" + ON + DELETE + RESTRICT + COMMA +
+				CONSTRAINT + "fk_ingredient_to_recipe" + FOREIGN_KEY + "(" + IngredientContract.RECIPE_ID_COLUMN_NAME + ") " +
+					REFERENCES + RecipeDaoSqlImpl.RecipeContract.TABLE_NAME +
+					" (" + RecipeDaoSqlImpl.RecipeContract._ID + ")" + ON + DELETE + CASCADE + ");";
+	private static final String [] INGREDIENT_COLUMNS = {
+			IngredientContract._ID,
+			IngredientContract.NAME_COLUMN_NAME,
+			IngredientContract.VALUE_COLUMN_NAME,
+			IngredientContract.UOM_ID_COLUMN_NAME,
+			IngredientContract.RECIPE_ID_COLUMN_NAME};
+	private static final int      ID_INDEX          = 0;
+	private static final int      NAME_INDEX        = 1;
+	private static final int      VALUE_INDEX  		= 2;
+	private static final int      UOM_ID_INDEX 		= 3;
+	private static final int      RECIPE_ID_INDEX   = 4;
 	private RecipeKeeperSqlHelper sqlHelper;
 
 	/**
@@ -101,7 +118,7 @@ public class IngredientDaoSqlImpl implements BaseDaoSql, IngredientDao {
 		ArrayList<String> whereArgsList = new ArrayList<>();
 		String[] whereArgs;
 
-		whereClause = setWhereData(ingredient, whereArgsList);
+		whereClause = buildWhereArgs(ingredient, whereArgsList);
 		whereArgs = new String[whereArgsList.size()];
 
 		sqlHelper.getWritableDatabase().beginTransactionNonExclusive();
@@ -120,7 +137,29 @@ public class IngredientDaoSqlImpl implements BaseDaoSql, IngredientDao {
 
 	@Override
 	public Set<Ingredient> read(Ingredient filter) {
-		return null;
+		Log.d("IngredientDaoSqlImpl", "Reading ingredients filtered by " + filter);
+		Set<Ingredient> result = new HashSet<>();
+		List<String> whereArgsList = new ArrayList<>();
+		String whereClause = buildWhereArgs(filter, whereArgsList);
+		String[] whereArgs = new String[whereArgsList.size()];
+
+		sqlHelper.getWritableDatabase().beginTransactionNonExclusive();
+		try {
+			Cursor cursor = sqlHelper.getWritableDatabase().query(IngredientContract.TABLE_NAME, INGREDIENT_COLUMNS, whereClause,
+					whereArgsList.toArray(whereArgs), null, null, null, null);
+			cursor.moveToFirst();
+			while(!cursor.isAfterLast()) {
+				Ingredient anIngredient = createIngredientInstance(cursor);
+				result.add(anIngredient);
+			}
+			cursor.close();
+			sqlHelper.getWritableDatabase().setTransactionSuccessful();
+		}
+		finally {
+			sqlHelper.getWritableDatabase().endTransaction();
+		}
+		Log.d("IngredientDaoSqlImpl", "Loaded " + result);
+		return result;
 	}
 
 	@Override
@@ -128,7 +167,7 @@ public class IngredientDaoSqlImpl implements BaseDaoSql, IngredientDao {
 		return null;
 	}
 
-	private String setWhereData(Ingredient filter, Collection<String> args) {
+	private String buildWhereArgs(Ingredient filter, Collection<String> args) {
 		boolean isFirst = true;
 		String whereClause = "";
 
@@ -168,5 +207,14 @@ public class IngredientDaoSqlImpl implements BaseDaoSql, IngredientDao {
 		whereClause = whereClause + fieldName + EQUALS + PLACEHOLDER;
 		args.add(value);
 		return whereClause;
+	}
+
+	private Ingredient createIngredientInstance(Cursor cursor) {
+		Ingredient anIngredient = new Ingredient();
+		anIngredient.setId(cursor.getLong(ID_INDEX));
+		anIngredient.setName(cursor.getString(NAME_INDEX));
+		anIngredient.setValue(new BigDecimal(cursor.getString(VALUE_INDEX)));
+
+		return anIngredient;
 	}
 }

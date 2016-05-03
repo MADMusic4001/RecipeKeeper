@@ -16,9 +16,7 @@
 package com.madinnovations.recipekeeper.view.activities.recipesList;
 
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -35,7 +33,6 @@ import android.widget.Toast;
 
 import com.madinnovations.recipekeeper.R;
 import com.madinnovations.recipekeeper.controller.events.LoadRecipesEvent;
-import com.madinnovations.recipekeeper.controller.events.RecipeSavedEvent;
 import com.madinnovations.recipekeeper.controller.events.RecipesLoadedEvent;
 import com.madinnovations.recipekeeper.controller.events.SaveRecipeEvent;
 import com.madinnovations.recipekeeper.model.entities.Recipe;
@@ -57,27 +54,23 @@ public class RecipesListFragment extends Fragment {
 	@Inject
 	protected RecipeListAdapter adapter;
 	@Inject
-	protected EventBus eventBus;
-	private OnRecipesListEventsListener	callbacksImpl = null;
+	protected EventBus eventBus = null;
 	private ListView listView;
 
 	@Override
-	public void onStop() {
-		eventBus.unregister(this);
-		super.onStop();
+	public void onResume() {
+		super.onResume();
+		if(eventBus != null && !eventBus.isRegistered(this)) {
+			eventBus.register(this);
+		}
 	}
 
 	@Override
-	public void onAttach(Context context) {
-		super.onAttach(context);
-
-		try {
-			callbacksImpl = (OnRecipesListEventsListener)getActivity();
+	public void onPause() {
+		if(eventBus != null) {
+			eventBus.unregister(this);
 		}
-		catch (ClassCastException ex) {
-			Log.d("RecipesListFragment:", ex.getMessage());
-			throw new ClassCastException(getActivity().toString() + " must implement OnRecipesListEventsListener.");
-		}
+		super.onPause();
 	}
 
 	@Override
@@ -92,7 +85,9 @@ public class RecipesListFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		((RecipesListActivity)getActivity()).getActivityComponent().newFragmentComponent(new FragmentModule(this))
 				.injectInto(this);
-		eventBus.register(this);
+		if(!eventBus.isRegistered(this)) {
+			eventBus.register(this);
+		}
 		View layout = inflater.inflate(R.layout.recipe_list_fragment, container, false);
 		listView = (ListView)layout.findViewById(R.id.rlf_list_view);
 		initListView();
@@ -138,20 +133,6 @@ public class RecipesListFragment extends Fragment {
 		adapter.notifyDataSetChanged();
 		Toast.makeText(getActivity(), toastString, Toast.LENGTH_SHORT).show();
 	}
-
-	// <editor-fold desc="Interface declarations">
-	/**
-	 * Defines methods to allow the fragment to communicate with the implementer (EditWorldActivity).
-	 */
-	public interface OnRecipesListEventsListener {
-		/**
-		 * Notifies the implementer when a {@code Recipe} is selected by the user.
-		 *
-		 * @param recipe the selected {@link Recipe}.
-		 */
-		void onRecipeSelected(Recipe recipe);
-	}
-	// </editor-fold>
 
 	// <editor-fold desc="Private plumbing methods">
 
@@ -207,7 +188,6 @@ public class RecipesListFragment extends Fragment {
 	}
 
 	private void editRecipe(@NonNull Recipe recipe) {
-		callbacksImpl.onRecipeSelected(recipe);
 		Intent intent = new Intent(getActivity().getApplicationContext(), RecipeDetailActivity.class);
 		intent.putExtra(IntentConstants.RECIPE_DETAIL_INTENT_RECIPE_ID, recipe.getName());
 		startActivity(intent);
