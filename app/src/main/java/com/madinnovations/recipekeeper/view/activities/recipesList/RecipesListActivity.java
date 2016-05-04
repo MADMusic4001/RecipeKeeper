@@ -76,12 +76,12 @@ public class RecipesListActivity extends Activity {
 		setContentView(R.layout.recipes_list);
 
 		detailFragment = (RecipeDetailFragment)getFragmentManager().findFragmentById(R.id.recipe_detail_framgent);
-		Log.e("RecipeListActivity", "detailFragment = " + detailFragment.toString());
+		Log.e("RecipeListActivity", "detailFragment = " + detailFragment);
 	}
 
 	@Subscribe(threadMode = ThreadMode.MAIN)
 	public void onRecipeSelected(RecipeSelectedEvent event) {
-		Log.e("RecipeListActivity", "detailFragment = " + detailFragment.toString());
+		Log.e("RecipeListActivity", "detailFragment = " + detailFragment);
 		if(detailFragment != null) {
 			Log.e("RecipeListActivity", "isVisible = " + detailFragment.isVisible());
 			detailFragment.setRecipe(event.getRecipe());
