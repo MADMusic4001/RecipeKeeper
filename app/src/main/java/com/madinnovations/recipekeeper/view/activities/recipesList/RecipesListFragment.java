@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import com.madinnovations.recipekeeper.R;
 import com.madinnovations.recipekeeper.controller.events.LoadRecipesEvent;
+import com.madinnovations.recipekeeper.controller.events.RecipeSelectedEvent;
 import com.madinnovations.recipekeeper.controller.events.RecipesLoadedEvent;
 import com.madinnovations.recipekeeper.controller.events.SaveRecipeEvent;
 import com.madinnovations.recipekeeper.model.entities.Recipe;
@@ -113,7 +114,7 @@ public class RecipesListFragment extends Fragment {
 		int id = item.getItemId();
 		if(id == R.id.actionNewRecipe){
 			Log.d("RecipeListFragment", "Creating new recipe");
-			eventBus.post(new SaveRecipeEvent(new Recipe(getString(R.string.default_recipe_name))));
+			eventBus.post(new RecipeSelectedEvent(new Recipe(getString(R.string.default_recipe_name))));
 			result = true;
 		}
 		return result || super.onOptionsItemSelected(item);

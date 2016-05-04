@@ -32,7 +32,7 @@ import com.madinnovations.recipekeeper.view.di.PerActivity;
 import javax.inject.Inject;
 
 /**
- * This class adapts Recipe data to a user interface list view.
+ * Adapts {@link Recipe} data to a {@link android.widget.ListView}.
  */
 @PerActivity
 public class RecipeListAdapter extends ArrayAdapter<Recipe> {
@@ -45,12 +45,13 @@ public class RecipeListAdapter extends ArrayAdapter<Recipe> {
 	/**
 	 * Creates a new RecipeListAdapter instance.
 	 *
-	 * @param context the view {@code Context} the adapter will be attached to.
+	 * @param context  the view {@code Context} to which the adapter will be attached
+	 * @param layoutInflater  a {@link LayoutInflater} instance to use to inflate the header and row layouts from xml
 	 */
 	@Inject
-	public RecipeListAdapter(Context context, LayoutInflater inflater) {
+	public RecipeListAdapter(Context context, LayoutInflater layoutInflater) {
 		super(context, LAYOUT_RESOURCE_ID);
-		layoutInflater = inflater;
+		this.layoutInflater = layoutInflater;
 	}
 
 	@Override

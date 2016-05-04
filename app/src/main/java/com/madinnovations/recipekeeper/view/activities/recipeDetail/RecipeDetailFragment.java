@@ -22,12 +22,17 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.madinnovations.recipekeeper.R;
 import com.madinnovations.recipekeeper.controller.events.RecipeSavedEvent;
+import com.madinnovations.recipekeeper.controller.events.RecipeSelectedEvent;
 import com.madinnovations.recipekeeper.model.entities.Recipe;
 import com.madinnovations.recipekeeper.view.activities.recipesList.RecipesListActivity;
+import com.madinnovations.recipekeeper.view.adapters.CategoryListAdapter;
 import com.madinnovations.recipekeeper.view.di.modules.FragmentModule;
 
 import org.greenrobot.eventbus.EventBus;
@@ -43,9 +48,19 @@ import javax.inject.Inject;
  * Created 4/23/2016.
  */
 public class RecipeDetailFragment extends Fragment {
-	private Recipe recipe;
 	@Inject
-	protected EventBus eventBus;
+	protected CategoryListAdapter adapter;
+	@Inject
+	protected EventBus            eventBus;
+	private   Recipe              recipe;
+	private   EditText            nameEdit;
+	private   EditText            descriptionEdit;
+	private   EditText            directionsEdit;
+	private   EditText            notesEdit;
+	private   EditText            sourceEdit;
+	private   ListView            categoriesList;
+	private   TextView            createdView;
+	private   TextView            updatedView;
 
 	@Override
 	public void onStop() {
@@ -77,6 +92,16 @@ public class RecipeDetailFragment extends Fragment {
 		}
 		eventBus.register(this);
 		View layout = inflater.inflate(R.layout.recipe_detail_fragment, container, false);
+		nameEdit = (EditText)layout.findViewById(R.id.recipe_name_edit);
+		descriptionEdit = (EditText)layout.findViewById(R.id.recipe_description_edit);
+		directionsEdit = (EditText)layout.findViewById(R.id.recipe_directions_edit);
+		notesEdit = (EditText)layout.findViewById(R.id.recipe_notes_edit);
+		sourceEdit = (EditText)layout.findViewById(R.id.recipe_source_edit);
+		createdView = (TextView) layout.findViewById(R.id.recipe_created_text);
+		updatedView = (TextView) layout.findViewById(R.id.recipe_updated_text);
+		categoriesList = (ListView)layout.findViewById(R.id.recipe_categories_list);
+
+		initListView();
 		return layout;
 	}
 
@@ -90,6 +115,69 @@ public class RecipeDetailFragment extends Fragment {
 			toastString = getString(R.string.toast_recipe_saved_error);
 		}
 		Toast.makeText(getActivity(), toastString, Toast.LENGTH_SHORT).show();
+	}
+
+	private void initListView() {
+		View footerView;
+
+		footerView = getActivity().getLayoutInflater().inflate(
+				R.layout.category_list_footer, categoriesList, false);
+		categoriesList.addFooterView(footerView);
+
+		// Create and set onClick methods for sorting the {@link World} list.
+//		headerView.findViewById(R.id.nameHeader).setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+////				controller.sortRecipesByName();
+//			}
+//		});
+//		headerView.findViewById(R.id.categoriesHeader).setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//			}
+//		});
+//		headerView.findViewById(R.id.createdHeader).setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//			}
+//		});
+//		View updatedView = headerView.findViewById(R.id.updatedHeader);
+//		if(updatedView != null) {
+//			updatedView.setOnClickListener(new View.OnClickListener
+//					() {
+//				@Override
+//				public void onClick(View v) {
+////					controller.sortRecipesByUpdated();
+//				}
+//			});
+//		}
+		categoriesList.setAdapter(adapter);
+
+		// Clicking a row in the listView will send the user to the recipes details activity
+//		categoriesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//			@Override
+//			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//				Recipe theRecipe = (Recipe) listView.getItemAtPosition(position);
+//				if (theRecipe != null) {
+//					editRecipe(theRecipe);
+//				}
+//			}
+//		});
+		registerForContextMenu(categoriesList);
+	}
+
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void onRecipeSelectedEvent(RecipeSelectedEvent event) {
+		this.recipe = event.getRecipe();
+		if(this.recipe != null) {
+			this.nameEdit.setText(this.recipe.getName());
+			this.descriptionEdit.setText(this.recipe.getDescription());
+			this.directionsEdit.setText(this.recipe.getDirections());
+			this.notesEdit.setText(this.recipe.getNotes());
+			this.sourceEdit.setText(this.recipe.getSource());
+			this.createdView.setText(String.format(getString(R.string.label_created_on), this.recipe.getCreated()));
+			this.createdView.setText(String.format(getString(R.string.label_last_updated), this.recipe.getUpdated()));
+		}
 	}
 
 	// Getters and setters

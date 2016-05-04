@@ -13,6 +13,7 @@
   <string name="label_category">Category</string>
   <string name="label_created">Created</string>
   <string name="label_description">Description</string>
+  <string name="label_directions">Directions</string>
   <string name="label_ingredient">Ingredient</string>
   <string name="label_ingredients">Ingredients</string>
   <string name="label_name">Name</string>
@@ -27,6 +28,10 @@
   <string name="label_actionNewRecipe">New Recipe</string>
   <string name="label_actionExport">Export all data</string>
   <string name="label_actionImport">Import all data</string>
+  <string name="label_new_category">Create new category</string>
+  <string name="label_add_category">Add category</string>
+  <string name="label_created_on">Created on: %1$s</string>
+  <string name="label_last_updated">Last updated on: %1$s</string>
 
   <!-- Settings strings -->
   <string name="label_settings">Settings</string>

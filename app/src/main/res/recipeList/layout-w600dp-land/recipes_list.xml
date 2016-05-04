@@ -9,18 +9,21 @@
       android:orientation="horizontal"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_gravity="center_horizontal">
+      android:layout_gravity="center_horizontal"
+      android:weightSum="2">
     <fragment
         android:name="com.madinnovations.recipekeeper.view.activities.recipesList.RecipesListFragment"
         android:id="@+id/recipe_list_framgent"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        tools:layout="@layout/recipe_list_fragment"/>
+        tools:layout="@layout/recipe_list_fragment"
+        android:layout_weight="1"/>
     <fragment
         android:name="com.madinnovations.recipekeeper.view.activities.recipeDetail.RecipeDetailFragment"
         android:id="@+id/recipe_detail_framgent"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        tools:layout="@layout/recipe_detail_fragment"/>
+        tools:layout="@layout/recipe_detail_fragment"
+        android:layout_weight="1"/>
   </LinearLayout>
 </LinearLayout>

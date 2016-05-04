@@ -18,6 +18,7 @@ package com.madinnovations.recipekeeper.view.activities.recipesList;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.madinnovations.recipekeeper.R;
 import com.madinnovations.recipekeeper.controller.eventhandlers.RecipeEventHandler;
@@ -75,14 +76,18 @@ public class RecipesListActivity extends Activity {
 		setContentView(R.layout.recipes_list);
 
 		detailFragment = (RecipeDetailFragment)getFragmentManager().findFragmentById(R.id.recipe_detail_framgent);
+		Log.e("RecipeListActivity", "detailFragment = " + detailFragment.toString());
 	}
 
 	@Subscribe(threadMode = ThreadMode.MAIN)
 	public void onRecipeSelected(RecipeSelectedEvent event) {
-		if(detailFragment == null) {
+		Log.e("RecipeListActivity", "detailFragment = " + detailFragment.toString());
+		if(detailFragment != null) {
+			Log.e("RecipeListActivity", "isVisible = " + detailFragment.isVisible());
 			detailFragment.setRecipe(event.getRecipe());
 		}
 		else {
+			Log.e("RecipeListActivity", "Starting detail activity");
 			Intent intent = new Intent(getApplicationContext(), RecipeDetailActivity.class);
 			intent.putExtra(IntentConstants.RECIPE_DETAIL_INTENT_RECIPE_ID, event.getRecipe().getId());
 			startActivity(intent);
