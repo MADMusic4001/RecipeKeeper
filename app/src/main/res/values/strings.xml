@@ -32,9 +32,13 @@
   <string name="label_add_category">Add category</string>
   <string name="label_created_on">Created on: %1$s</string>
   <string name="label_last_updated">Last updated on: %1$s</string>
+  <string name="label_save">Save</string>
 
   <!-- Settings strings -->
   <string name="label_settings">Settings</string>
+
+  <!-- Validation error strings -->
+  <string name="error_required">This field cannot be empty</string>
 
   <!-- Exception strings -->
   <string name="exception_dbAccessError">Unable to access database.</string>

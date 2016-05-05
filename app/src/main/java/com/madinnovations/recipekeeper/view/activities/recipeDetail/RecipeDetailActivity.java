@@ -17,18 +17,18 @@ package com.madinnovations.recipekeeper.view.activities.recipeDetail;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 
+import com.madinnovations.recipekeeper.R;
 import com.madinnovations.recipekeeper.view.RecipeKeeperApp;
 import com.madinnovations.recipekeeper.view.di.components.ActivityComponent;
 import com.madinnovations.recipekeeper.view.di.modules.ActivityModule;
 
 /**
- * ${CLASS_DESCRIPTION}
- *
- * @author Mark
- * Created 4/23/2016.
+ * Activity to create and manage the Recipe details UI
  */
 public class RecipeDetailActivity extends Activity {
+	private RecipeDetailFragment detailFragment;
 	private ActivityComponent activityComponent;
 
 	@Override
@@ -38,6 +38,10 @@ public class RecipeDetailActivity extends Activity {
 		activityComponent = ((RecipeKeeperApp) getApplication()).getApplicationComponent()
 				.newActivityComponent(new ActivityModule(this));
 		activityComponent.injectInto(this);
+		setContentView(R.layout.recipe_detail);
+
+		detailFragment = (RecipeDetailFragment)getFragmentManager().findFragmentById(R.id.recipe_detail_framgent);
+		Log.e("RecipeDetailActivity", "detailFragment = " + detailFragment);
 	}
 
 	// Getters and setters
