@@ -22,34 +22,34 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.Spinner;
 
 import com.madinnovations.recipekeeper.R;
-import com.madinnovations.recipekeeper.model.entities.Recipe;
-import com.madinnovations.recipekeeper.model.utils.DateUtils;
+import com.madinnovations.recipekeeper.model.entities.Ingredient;
+import com.madinnovations.recipekeeper.model.utils.NumberUtils;
 import com.madinnovations.recipekeeper.view.di.PerActivity;
 
 import javax.inject.Inject;
 
 /**
- * Adapts {@link Recipe} data to a {@link android.widget.ListView}.
+ * Adapts {@link Ingredient} data to a {@link android.widget.ListView}
  */
 @PerActivity
-public class RecipeListAdapter extends ArrayAdapter<Recipe> {
-	private static final int LAYOUT_RESOURCE_ID = R.layout.recipe_list_row;
-	private   LayoutInflater       layoutInflater;
+public class IngredientListAdapter extends ArrayAdapter<Ingredient> {
+	private static final int LAYOUT_RESOURCE_ID = R.layout.ingredient_list_row;
+	private LayoutInflater layoutInflater;
 	private int[] colors = new int[]{
 			R.color.list_even_row_background,
 			R.color.list_odd_row_background};
 
 	/**
-	 * Creates a new RecipeListAdapter instance.
+	 * Creates a new IngredientListAdapter instance.
 	 *
-	 * @param context  the view {@code Context} to which the categoryListAdapter will be attached
+	 * @param context  the view {@code Context} to which this IngredientListAdapter will be attached
 	 * @param layoutInflater  a {@link LayoutInflater} instance to use to inflate the header and row layouts from xml
 	 */
 	@Inject
-	public RecipeListAdapter(Context context, LayoutInflater layoutInflater) {
+	public IngredientListAdapter(Context context, LayoutInflater layoutInflater) {
 		super(context, LAYOUT_RESOURCE_ID);
 		this.layoutInflater = layoutInflater;
 	}
@@ -61,10 +61,9 @@ public class RecipeListAdapter extends ArrayAdapter<Recipe> {
 
 		if (convertView == null) {
 			rowView = layoutInflater.inflate(LAYOUT_RESOURCE_ID, parent, false);
-			holder = new ViewHolder((TextView) rowView.findViewById(R.id.nameView),
-									(TextView) rowView.findViewById(R.id.categoriesView),
-									(TextView) rowView.findViewById(R.id.createdView),
-									(TextView) rowView.findViewById(R.id.updatedView));
+			holder = new ViewHolder((EditText) rowView.findViewById(R.id.ingredient_value_edit),
+									(Spinner) rowView.findViewById(R.id.ingredient_uom_spinner),
+									(EditText) rowView.findViewById(R.id.ingredient_name_edit));
 			rowView.setTag(holder);
 		}
 		else {
@@ -73,21 +72,18 @@ public class RecipeListAdapter extends ArrayAdapter<Recipe> {
 		}
 
 		rowView.setBackgroundColor(ContextCompat.getColor(getContext(), colors[position % colors.length]));
-		final Recipe recipe = getItem(position);
-		holder.nameView.setText(recipe.getName());
-		holder.categoriesView.setText(recipe.getCategoriesAsText());
-		holder.createdView.setText(DateUtils.getFormattedDateOrTime(getContext(), recipe.getCreated().getTimeInMillis()));
-		if (holder.updatedView != null) {
-			holder.updatedView.setText(DateUtils.getFormattedDateOrTime(getContext(), recipe.getUpdated().getTimeInMillis()));
-		}
-		holder.nameView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+		final Ingredient ingredient = getItem(position);
+		holder.valueEdit.setText(NumberUtils.toDisplayString(getContext().getResources().getConfiguration().locale,
+															 ingredient.getValue()));
+		holder.nameEdit.setText(ingredient.getName());
+		holder.nameEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 				if(!hasFocus) {
 					String enteredName = ((EditText)v).getText().toString();
-					Recipe recipe = getItem(position);
-					if(!recipe.getName().equals(enteredName)) {
-						recipe.setName(enteredName);
+					Ingredient ingredient = getItem(position);
+					if(!ingredient.getName().equals(enteredName)) {
+						ingredient.setName(enteredName);
 					}
 				}
 				else {
@@ -99,16 +95,14 @@ public class RecipeListAdapter extends ArrayAdapter<Recipe> {
 	}
 
 	private static class ViewHolder {
-		private TextView nameView;
-		private TextView categoriesView;
-		private TextView createdView;
-		private TextView updatedView;
+		private EditText valueEdit;
+		private Spinner  uomSpinner;
+		private EditText nameEdit;
 
-		ViewHolder(TextView nameView, TextView categoriesView, TextView createdView, TextView updatedView) {
-			this.nameView = nameView;
-			this.categoriesView = categoriesView;
-			this.createdView = createdView;
-			this.updatedView = updatedView;
+		ViewHolder(EditText valueEdit, Spinner uomSpinner, EditText nameEdit) {
+			this.valueEdit = valueEdit;
+			this.uomSpinner = uomSpinner;
+			this.nameEdit = nameEdit;
 		}
 	}
 }

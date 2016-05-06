@@ -8,10 +8,10 @@
       android:layout_height="match_parent"
       android:id="@+id/ingredient_value_edit"
       android:hint="@string/label_value"/>
-  <ExpandableListView
+  <Spinner
       android:layout_width="wrap_content"
       android:layout_height="match_parent"
-      android:id="@+id/ingredient_uom_selector"/>
+      android:id="@+id/ingredient_uom_spinner"/>
   <EditText
       android:layout_width="wrap_content"
       android:layout_height="match_parent"

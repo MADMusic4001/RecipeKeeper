@@ -33,6 +33,7 @@
   <string name="label_created_on">Created on: %1$s</string>
   <string name="label_last_updated">Last updated on: %1$s</string>
   <string name="label_save">Save</string>
+  <string name="label_manage_uoms">Manage units of measure</string>
 
   <!-- Settings strings -->
   <string name="label_settings">Settings</string>

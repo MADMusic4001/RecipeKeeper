@@ -8,6 +8,10 @@
     android:title="@string/label_actionNewRecipe"
     android:showAsAction="ifRoom"/>
   <item
+    android:id="@+id/actionManageUOM"
+    android:title="@string/label_manage_uoms"
+      android:showAsAction="ifRoom"/>
+  <item
     android:id="@+id/action_export"
     android:title="@string/label_actionExport"
     android:showAsAction="never"/>

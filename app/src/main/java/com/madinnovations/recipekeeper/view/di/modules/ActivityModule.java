@@ -17,6 +17,7 @@ package com.madinnovations.recipekeeper.view.di.modules;
 
 import com.madinnovations.recipekeeper.view.activities.recipeDetail.RecipeDetailActivity;
 import com.madinnovations.recipekeeper.view.activities.recipesList.RecipesListActivity;
+import com.madinnovations.recipekeeper.view.activities.unitsOfMeasure.UnitsOfMeasureActivity;
 import com.madinnovations.recipekeeper.view.di.PerActivity;
 
 import dagger.Module;
@@ -32,22 +33,28 @@ import dagger.Provides;
 public class ActivityModule {
 	RecipesListActivity  recipesListActivity;
 	RecipeDetailActivity recipeDetailActivity;
+	UnitsOfMeasureActivity unitsOfMeasureActivity;
 
 	public ActivityModule(RecipesListActivity recipesListActivity) {
 		this.recipesListActivity = recipesListActivity;
 	}
-
 	public ActivityModule(RecipeDetailActivity recipeDetailActivity) {
 		this.recipeDetailActivity = recipeDetailActivity;
 	}
-
-	@Provides @PerActivity
-	RecipesListActivity selectWorldActivity() {
-		return this.recipesListActivity;
+	public ActivityModule(UnitsOfMeasureActivity unitsOfMeasureActivity) {
+		this.unitsOfMeasureActivity = unitsOfMeasureActivity;
 	}
 
 	@Provides @PerActivity
+	RecipesListActivity recipesListActivity() {
+		return this.recipesListActivity;
+	}
+	@Provides @PerActivity
 	RecipeDetailActivity recipeDetailActivity() {
 		return this.recipeDetailActivity;
+	}
+	@Provides @PerActivity
+	UnitsOfMeasureActivity unitsOfMeasureActivity() {
+		return this.unitsOfMeasureActivity;
 	}
 }

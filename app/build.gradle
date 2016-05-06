@@ -24,6 +24,7 @@ android {
 			res.srcDirs = [
 			        'src/main/res/recipeList',
 					'src/main/res/recipeDetail',
+					'src/main/res/unitsOfMeasure',
 					'src/main/res'
 			]
 		}

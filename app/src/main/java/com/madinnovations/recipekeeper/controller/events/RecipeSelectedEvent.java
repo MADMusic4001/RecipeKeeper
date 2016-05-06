@@ -3,7 +3,7 @@ package com.madinnovations.recipekeeper.controller.events;
 import com.madinnovations.recipekeeper.model.entities.Recipe;
 
 /**
- * Event indicating a Recipe was selected from the list of recipes.
+ * Event indicating a {@link Recipe} was selected from the list of recipes.
  */
 public class RecipeSelectedEvent {
     private Recipe recipe;

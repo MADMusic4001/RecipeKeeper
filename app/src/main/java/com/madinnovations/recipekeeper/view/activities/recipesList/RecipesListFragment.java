@@ -39,6 +39,7 @@ import com.madinnovations.recipekeeper.controller.events.SaveRecipeEvent;
 import com.madinnovations.recipekeeper.model.entities.Recipe;
 import com.madinnovations.recipekeeper.model.utils.IntentConstants;
 import com.madinnovations.recipekeeper.view.activities.recipeDetail.RecipeDetailActivity;
+import com.madinnovations.recipekeeper.view.activities.unitsOfMeasure.UnitsOfMeasureActivity;
 import com.madinnovations.recipekeeper.view.adapters.RecipeListAdapter;
 import com.madinnovations.recipekeeper.view.di.modules.FragmentModule;
 
@@ -49,7 +50,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import javax.inject.Inject;
 
 /**
- * A RecipesListFragment manages the interaction with the Recipes List user interface.
+ * Manages the interaction with the Recipes List user interface.
  */
 public class RecipesListFragment extends Fragment {
 	@Inject
@@ -116,6 +117,10 @@ public class RecipesListFragment extends Fragment {
 			Log.d("RecipeListFragment", "Creating new recipe");
 			eventBus.post(new RecipeSelectedEvent(new Recipe(getString(R.string.default_recipe_name))));
 			result = true;
+		}
+		if(id == R.id.actionManageUOM){
+			Intent intent = new Intent(getActivity().getApplicationContext(), UnitsOfMeasureActivity.class);
+			startActivity(intent);
 		}
 		return result || super.onOptionsItemSelected(item);
 	}

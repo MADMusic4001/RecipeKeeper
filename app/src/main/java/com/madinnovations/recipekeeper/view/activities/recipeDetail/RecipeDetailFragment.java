@@ -17,10 +17,8 @@ package com.madinnovations.recipekeeper.view.activities.recipeDetail;
 
 import android.app.Fragment;
 import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,11 +32,13 @@ import com.madinnovations.recipekeeper.R;
 import com.madinnovations.recipekeeper.controller.events.RecipeSavedEvent;
 import com.madinnovations.recipekeeper.controller.events.RecipeSelectedEvent;
 import com.madinnovations.recipekeeper.controller.events.SaveRecipeEvent;
-import com.madinnovations.recipekeeper.model.entities.Category;
 import com.madinnovations.recipekeeper.model.entities.Recipe;
+import com.madinnovations.recipekeeper.model.utils.DateUtils;
 import com.madinnovations.recipekeeper.model.utils.StringUtils;
 import com.madinnovations.recipekeeper.view.activities.recipesList.RecipesListActivity;
 import com.madinnovations.recipekeeper.view.adapters.CategoryListAdapter;
+import com.madinnovations.recipekeeper.view.adapters.IngredientListAdapter;
+import com.madinnovations.recipekeeper.view.adapters.UnitOfMeasureSpinnerAdapter;
 import com.madinnovations.recipekeeper.view.di.modules.FragmentModule;
 
 import org.greenrobot.eventbus.EventBus;
@@ -50,16 +50,17 @@ import java.util.Calendar;
 import javax.inject.Inject;
 
 /**
- * ${CLASS_DESCRIPTION}
- *
- * @author Mark
- * Created 4/23/2016.
+ * Manages the interaction with the Recipe details user interface.
  */
 public class RecipeDetailFragment extends Fragment {
 	@Inject
-	protected CategoryListAdapter adapter;
+	protected CategoryListAdapter   categoryListAdapter;
 	@Inject
-	protected EventBus            eventBus;
+	protected IngredientListAdapter ingredientListAdapter;
+	@Inject
+	protected UnitOfMeasureSpinnerAdapter uomSpinnerAdapter;
+	@Inject
+	protected EventBus              eventBus;
 	private   Recipe              recipe = new Recipe();
 	private   EditText            nameEdit;
 	private   EditText            descriptionEdit;
@@ -72,14 +73,19 @@ public class RecipeDetailFragment extends Fragment {
 	private   Button              saveButton;
 
 	@Override
-	public void onStop() {
-		eventBus.unregister(this);
-		super.onStop();
+	public void onResume() {
+		super.onResume();
+		if(eventBus != null && !eventBus.isRegistered(this)) {
+			eventBus.register(this);
+		}
 	}
 
 	@Override
-	public void onAttach(Context context) {
-		super.onAttach(context);
+	public void onPause() {
+		if(eventBus != null) {
+			eventBus.unregister(this);
+		}
+		super.onPause();
 	}
 
 	@Override
@@ -133,6 +139,7 @@ public class RecipeDetailFragment extends Fragment {
 			@Override
 			public void onClick(View view) {
 				boolean changed = false;
+				boolean errors = false;
 				Recipe newRecipe = new Recipe();
 
 				newRecipe.setId(recipe.getId());
@@ -152,6 +159,7 @@ public class RecipeDetailFragment extends Fragment {
 				String value = nameEdit.getText().toString();
 				if(value == null || value.isEmpty()) {
 					nameEdit.setError(getString(R.string.error_required));
+					errors = true;
 				} else if(!value.equals(recipe.getName())) {
 					newRecipe.setName(value);
 					changed = true;
@@ -179,7 +187,7 @@ public class RecipeDetailFragment extends Fragment {
 				// TODO: Categories
 				// TODO: Ingredients
 
-				if(changed) {
+				if(changed && !errors) {
 					eventBus.post(new SaveRecipeEvent(newRecipe));
 				}
 			}
@@ -220,7 +228,7 @@ public class RecipeDetailFragment extends Fragment {
 //				}
 //			});
 //		}
-		categoriesList.setAdapter(adapter);
+		categoriesList.setAdapter(categoryListAdapter);
 
 		// Clicking a row in the listView will send the user to the recipes details activity
 //		categoriesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -238,15 +246,7 @@ public class RecipeDetailFragment extends Fragment {
 	@Subscribe(threadMode = ThreadMode.MAIN)
 	public void onRecipeSelectedEvent(RecipeSelectedEvent event) {
 		this.recipe = event.getRecipe();
-		if(this.recipe != null) {
-			this.nameEdit.setText(this.recipe.getName());
-			this.descriptionEdit.setText(this.recipe.getDescription());
-			this.directionsEdit.setText(this.recipe.getDirections());
-			this.notesEdit.setText(this.recipe.getNotes());
-			this.sourceEdit.setText(this.recipe.getSource());
-			this.createdView.setText(String.format(getString(R.string.label_created_on), this.recipe.getCreated()));
-			this.createdView.setText(String.format(getString(R.string.label_last_updated), this.recipe.getUpdated()));
-		}
+		copyRecipeToView();
 	}
 
 	@Subscribe(threadMode = ThreadMode.MAIN)
@@ -255,18 +255,35 @@ public class RecipeDetailFragment extends Fragment {
 
 		if(event.isSuccess()) {
 			this.recipe = event.getRecipe();
-			this.nameEdit.setText(this.recipe.getName());
-			this.descriptionEdit.setText(this.recipe.getDescription());
-			this.directionsEdit.setText(this.recipe.getDirections());
-			this.notesEdit.setText(this.recipe.getNotes());
-			this.sourceEdit.setText(this.recipe.getSource());
-			this.createdView.setText(String.format(getString(R.string.label_created_on), this.recipe.getCreated()));
-			this.createdView.setText(String.format(getString(R.string.label_last_updated), this.recipe.getUpdated()));
+			copyRecipeToView();
 			toastString = getString(R.string.toast_recipe_saved);
 		} else {
 			toastString = getString((R.string.toast_recipe_saved_error));
 		}
 		Toast.makeText(getActivity(), toastString, Toast.LENGTH_LONG).show();
+	}
+
+	private void copyRecipeToView() {
+		if(this.recipe == null) {
+			this.nameEdit.setText(null);
+			this.descriptionEdit.setText(null);
+			this.directionsEdit.setText(null);
+			this.notesEdit.setText(null);
+			this.sourceEdit.setText(null);
+			this.createdView.setText(null);
+			this.updatedView.setText(null);
+		} else {
+			this.nameEdit.setText(this.recipe.getName());
+			this.descriptionEdit.setText(this.recipe.getDescription());
+			this.directionsEdit.setText(this.recipe.getDirections());
+			this.notesEdit.setText(this.recipe.getNotes());
+			this.sourceEdit.setText(this.recipe.getSource());
+			this.createdView.setText(String.format(getString(R.string.label_created_on),
+						DateUtils.getFormattedDateOrTime(getActivity(), this.recipe.getCreated().getTimeInMillis())));
+			this.updatedView.setText(String.format(getString(R.string.label_last_updated),
+						DateUtils.getFormattedDateOrTime(getActivity(), this.recipe.getUpdated().getTimeInMillis())));
+		}
+		categoryListAdapter.notifyDataSetChanged();
 	}
 
 	// Getters and setters

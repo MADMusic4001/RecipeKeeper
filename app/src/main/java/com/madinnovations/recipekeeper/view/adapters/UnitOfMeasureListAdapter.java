@@ -24,30 +24,30 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.madinnovations.recipekeeper.R;
-import com.madinnovations.recipekeeper.model.entities.Category;
+import com.madinnovations.recipekeeper.model.entities.UnitOfMeasure;
 import com.madinnovations.recipekeeper.view.di.PerActivity;
 
 import javax.inject.Inject;
 
 /**
- * Adapts {@link Category} data to a {@link android.widget.ListView}
+ * Adapts {@link UnitOfMeasure} data to a {@link android.widget.ListView}.
  */
 @PerActivity
-public class CategoryListAdapter extends ArrayAdapter<Category> {
-	private static final int LAYOUT_RESOURCE_ID = R.layout.category_list_row;
+public class UnitOfMeasureListAdapter extends ArrayAdapter<UnitOfMeasure> {
+	private static final int LAYOUT_RESOURCE_ID = R.layout.recipe_list_row;
 	private LayoutInflater layoutInflater;
 	private int[] colors = new int[]{
 			R.color.list_even_row_background,
 			R.color.list_odd_row_background};
 
 	/**
-	 * Creates a new CategoryListAdapter instance
+	 * Creates a new UnitOfMeasureListAdapter instance
 	 *
-	 * @param context  the view {@code Context} to which the CategoryListAdapter will be attached
-	 * @param layoutInflater  a {@link LayoutInflater} instance to use to inflate the footer and row layouts from xml
+	 * @param context  the view {@code Context} to which the categoryListAdapter will be attached
+	 * @param layoutInflater  a {@link LayoutInflater} instance to use to inflate the header and row layouts from xml
 	 */
 	@Inject
-	public CategoryListAdapter(Context context, LayoutInflater layoutInflater) {
+	public UnitOfMeasureListAdapter(Context context, LayoutInflater layoutInflater) {
 		super(context, LAYOUT_RESOURCE_ID);
 		this.layoutInflater = layoutInflater;
 	}
@@ -57,27 +57,30 @@ public class CategoryListAdapter extends ArrayAdapter<Category> {
 		View rowView;
 		ViewHolder holder;
 
-		if (convertView == null) {
+		if(convertView == null) {
 			rowView = layoutInflater.inflate(LAYOUT_RESOURCE_ID, parent, false);
-			holder = new ViewHolder((TextView) rowView.findViewById(R.id.categoy_name_text));
+			holder = new ViewHolder((TextView)rowView.findViewById(R.id.singularNameView),
+									(TextView)rowView.findViewById(R.id.pluralNameView));
 			rowView.setTag(holder);
-		}
-		else {
+		} else {
 			rowView = convertView;
-			holder = (ViewHolder) convertView.getTag();
+			holder = (ViewHolder)rowView.getTag();
 		}
 
 		rowView.setBackgroundColor(ContextCompat.getColor(getContext(), colors[position % colors.length]));
-		final Category category = getItem(position);
-		holder.nameView.setText(category.getName());
+		final UnitOfMeasure unitOfMeasure = getItem(position);
+		holder.singularNameView.setText(unitOfMeasure.getSingularName());
+		holder.pluralNameView.setText(unitOfMeasure.getPluralName());
 		return rowView;
 	}
 
 	private static class ViewHolder {
-		private TextView nameView;
+		private TextView singularNameView;
+		private TextView pluralNameView;
 
-		ViewHolder(TextView nameView) {
-			this.nameView = nameView;
+		public ViewHolder(TextView singularNameView, TextView pluralNameView) {
+			this.singularNameView = singularNameView;
+			this.pluralNameView = pluralNameView;
 		}
 	}
 }

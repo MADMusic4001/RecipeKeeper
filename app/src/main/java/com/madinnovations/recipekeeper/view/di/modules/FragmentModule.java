@@ -17,6 +17,8 @@ package com.madinnovations.recipekeeper.view.di.modules;
 
 import com.madinnovations.recipekeeper.view.activities.recipeDetail.RecipeDetailFragment;
 import com.madinnovations.recipekeeper.view.activities.recipesList.RecipesListFragment;
+import com.madinnovations.recipekeeper.view.activities.unitsOfMeasure.UnitOfMeasureDetailFragment;
+import com.madinnovations.recipekeeper.view.activities.unitsOfMeasure.UnitsOfMeasureListFragment;
 import com.madinnovations.recipekeeper.view.di.PerFragment;
 
 import dagger.Module;
@@ -31,13 +33,20 @@ import dagger.Provides;
 public class FragmentModule {
 	RecipesListFragment  recipesListFragment;
 	RecipeDetailFragment recipeDetailFragment;
+	UnitOfMeasureDetailFragment unitOfMeasureDetailFragment;
+	UnitsOfMeasureListFragment unitsOfMeasureListFragment;
 
 	public FragmentModule(RecipesListFragment recipesListFragment) {
 		this.recipesListFragment = recipesListFragment;
 	}
-
 	public FragmentModule(RecipeDetailFragment recipeDetailFragment) {
 		this.recipeDetailFragment = recipeDetailFragment;
+	}
+	public FragmentModule(UnitOfMeasureDetailFragment unitOfMeasureDetailFragment) {
+		this.unitOfMeasureDetailFragment = unitOfMeasureDetailFragment;
+	}
+	public FragmentModule(UnitsOfMeasureListFragment unitsOfMeasureListFragment) {
+		this.unitsOfMeasureListFragment = unitsOfMeasureListFragment;
 	}
 
 	@Provides @PerFragment
@@ -49,4 +58,10 @@ public class FragmentModule {
 	RecipeDetailFragment recipeDetailFragment() {
 		return this.recipeDetailFragment;
 	}
+
+	@Provides @PerFragment
+	UnitsOfMeasureListFragment unitsOfMeasureListFragment() { return this.unitsOfMeasureListFragment;}
+
+	@Provides @PerFragment
+	UnitOfMeasureDetailFragment unitOfMeasureDetailFragment() { return this.unitOfMeasureDetailFragment;}
 }

@@ -31,6 +31,15 @@
         android:name="android.support.PARENT_ACTIVITY"
         android:value=".view.activities.recipesList.RecipesListActivity"/>
     </activity>
+    <activity android:name=".view.activities.unitsOfMeasure.UnitsOfMeasureActivity"
+              android:label="@string/label_manage_uoms"
+              android:parentActivityName=".view.activities.recipesList.RecipesListActivity"
+              tools:ignore="UnusedAttribute"
+              android:windowSoftInputMode="adjustPan">
+      <meta-data
+        android:name="android.support.PARENT_ACTIVITY"
+        android:value=".view.activities.recipesList.RecipesListActivity"/>
+    </activity>
     <meta-data android:name="RECIPE_KEEPER_DB_NAME" android:value="recipeKeeper.db"/>
     <meta-data android:name="RECIPE_KEEPER_DB_VERSION" android:value="1"/>
     <meta-data android:name="RECIPE_KEEPER_MODELS" android:value="
