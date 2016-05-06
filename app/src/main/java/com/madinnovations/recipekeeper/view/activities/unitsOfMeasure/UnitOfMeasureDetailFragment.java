@@ -26,6 +26,7 @@ import android.widget.EditText;
 
 import com.madinnovations.recipekeeper.R;
 import com.madinnovations.recipekeeper.controller.events.SaveRecipeEvent;
+import com.madinnovations.recipekeeper.controller.events.SaveUnitOfMeasureEvent;
 import com.madinnovations.recipekeeper.model.entities.Recipe;
 import com.madinnovations.recipekeeper.model.entities.UnitOfMeasure;
 import com.madinnovations.recipekeeper.model.utils.StringUtils;
@@ -104,38 +105,42 @@ public class UnitOfMeasureDetailFragment extends Fragment{
 				if(value == null || value.isEmpty()) {
 					singularNameEdit.setError(getString(R.string.error_required));
 					errors = true;
-				} else if(!value.equals(recipe.getName())) {
-					newRecipe.setName(value);
+				} else if(!value.equals(unitOfMeasure.getSingularName())) {
+					newUom.setSingularName(value);
 					changed = true;
 				}
-				value = descriptionEdit.getText().toString();
-				if(!StringUtils.equals(value, recipe.getDescription())) {
-					newRecipe.setDescription(value);
-					changed = true;
-				}
-				value = directionsEdit.getText().toString();
-				if(!StringUtils.equals(value, recipe.getDirections())) {
-					newRecipe.setDirections(value);
+				value = pluralNameEdit.getText().toString();
+				if(!StringUtils.equals(value, unitOfMeasure.getPluralName())) {
+					newUom.setPluralName(value);
 					changed = true;
 				}
 				value = notesEdit.getText().toString();
-				if(!StringUtils.equals(value, recipe.getNotes())) {
-					newRecipe.setNotes(value);
+				if(!StringUtils.equals(value, unitOfMeasure.getNotes())) {
+					newUom.setNotes(value);
 					changed = true;
 				}
-				value = sourceEdit.getText().toString();
-				if(!StringUtils.equals(value, recipe.getSource())) {
-					newRecipe.setSource(value);
-					changed = true;
-				}
-				// TODO: Categories
-				// TODO: Ingredients
 
 				if(changed && !errors) {
-					eventBus.post(new SaveRecipeEvent(newRecipe));
+					eventBus.post(new SaveUnitOfMeasureEvent(newUom));
 				}
 			}
 		});
+	}
+
+	private void initListView() {
+
+	}
+
+	private void copyUnitOfMeasureToView() {
+		if(unitOfMeasure == null) {
+			this.singularNameEdit.setText(null);
+			this.pluralNameEdit.setText(null);
+			this.notesEdit.setText(null);
+		} else {
+			this.singularNameEdit.setText(unitOfMeasure.getSingularName());
+			this.pluralNameEdit.setText(unitOfMeasure.getPluralName());
+			this.notesEdit.setText(unitOfMeasure.getNotes());
+		}
 	}
 
 	// Getters and setters
