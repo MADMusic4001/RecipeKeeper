@@ -17,6 +17,7 @@ package com.madinnovations.recipekeeper.view.adapters;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +59,7 @@ public class RecipeListAdapter extends ArrayAdapter<Recipe> {
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		View rowView;
 		ViewHolder holder;
-
+		Log.e("RecipeListAdapter", "position = " + position);
 		if (convertView == null) {
 			rowView = layoutInflater.inflate(LAYOUT_RESOURCE_ID, parent, false);
 			holder = new ViewHolder((TextView) rowView.findViewById(R.id.nameView),

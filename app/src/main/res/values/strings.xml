@@ -7,8 +7,20 @@
   <string name="toast_recipes_loaded_error">Error loading recipes</string>
   <string name="toast_recipe_saved">Recipe successfully saved</string>
   <string name="toast_recipe_saved_error">Error saving recipe</string>
+  <string name="toast_uom_saved">Unit of measure successfully saved</string>
+  <string name="toast_uom_saved_error">Error saving unit of measure</string>
+  <string name="toast_units_of_measure_loaded">Units of Measure successfully loaded</string>
+  <string name="toast_units_of_measure_loaded_error">Error loading units of measure</string>
 
   <!-- Widget Labels -->
+  <string name="label_actionExport">Export all data</string>
+  <string name="label_actionImport">Import all data</string>
+  <string name="label_actionManageCategories">Manage categories</string>
+  <string name="label_actionManageRecipes">Manage recipes</string>
+  <string name="label_actionManageUnitsOfMeasure">Manage units of measure</string>
+  <string name="label_actionNewCategory">New Category</string>
+  <string name="label_actionNewUnitOfMeasure">New Unit of Measure</string>
+  <string name="label_actionNewRecipe">New Recipe</string>
   <string name="label_categories">Categories</string>
   <string name="label_category">Category</string>
   <string name="label_created">Created</string>
@@ -25,15 +37,11 @@
   <string name="label_updated">Updated</string>
   <string name="label_value">Value</string>
   <string name="label_editRecipe">Edit Recipe</string>
-  <string name="label_actionNewRecipe">New Recipe</string>
-  <string name="label_actionExport">Export all data</string>
-  <string name="label_actionImport">Import all data</string>
-  <string name="label_new_category">Create new category</string>
   <string name="label_add_category">Add category</string>
   <string name="label_created_on">Created on: %1$s</string>
   <string name="label_last_updated">Last updated on: %1$s</string>
   <string name="label_save">Save</string>
-  <string name="label_manage_uoms">Manage units of measure</string>
+  <string name="label_manage_categories">Manage categories</string>
 
   <!-- Settings strings -->
   <string name="label_settings">Settings</string>

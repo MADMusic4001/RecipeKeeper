@@ -23,16 +23,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.madinnovations.recipekeeper.R;
 import com.madinnovations.recipekeeper.controller.events.SaveRecipeEvent;
 import com.madinnovations.recipekeeper.controller.events.SaveUnitOfMeasureEvent;
+import com.madinnovations.recipekeeper.controller.events.UnitOfMeasureSavedEvent;
+import com.madinnovations.recipekeeper.controller.events.UnitOfMeasureSelectedEvent;
 import com.madinnovations.recipekeeper.model.entities.Recipe;
 import com.madinnovations.recipekeeper.model.entities.UnitOfMeasure;
 import com.madinnovations.recipekeeper.model.utils.StringUtils;
 import com.madinnovations.recipekeeper.view.di.modules.FragmentModule;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Calendar;
 
@@ -84,7 +89,6 @@ public class UnitOfMeasureDetailFragment extends Fragment{
 		saveButton = (Button)layout.findViewById(R.id.uom_save_button);
 
 		initSaveButton();
-		initListView();
 		return layout;
 	}
 
@@ -127,8 +131,35 @@ public class UnitOfMeasureDetailFragment extends Fragment{
 		});
 	}
 
-	private void initListView() {
+	/**
+	 * Responds to UnitOfMeasureSelectedEvent by copying the select UnitOfMeasure instance to the UI fields.
+	 *
+	 * @param event  a UnitOfMeasureSelectedEvent instance
+     */
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void onUnitOfMeasureSelected(UnitOfMeasureSelectedEvent event) {
+		unitOfMeasure = event.getUnitOfMeasure();
+		copyUnitOfMeasureToView();
+	}
 
+	/**
+	 * Responds to UnitOfMeasureSavedEvent by displaying a toast informing the user of the result and, if the save was successful, it also
+	 * copies the save UnitOfMeasure instance to the UI fields.
+	 *
+	 * @param event  a UnitOfMeasureSavedEvent instance
+     */
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void onUnitOfMeasureSaved(UnitOfMeasureSavedEvent event) {
+		String toastString;
+
+		if(event.isSuccess()) {
+			unitOfMeasure = event.getUnitOfMeasure();
+			copyUnitOfMeasureToView();
+			toastString = getString(R.string.toast_uom_saved);
+		} else {
+			toastString = getString(R.string.toast_uom_saved_error);
+		}
+		Toast.makeText(getActivity(), toastString, Toast.LENGTH_SHORT).show();
 	}
 
 	private void copyUnitOfMeasureToView() {

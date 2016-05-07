@@ -3,7 +3,9 @@
               android:orientation="horizontal"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:baselineAligned="false">
+              android:baselineAligned="false"
+              android:weightSum="2">
+
   <fragment
       android:name="com.madinnovations.recipekeeper.view.activities.unitsOfMeasure.UnitsOfMeasureListFragment"
       android:id="@+id/units_of_measure_list_fragment"

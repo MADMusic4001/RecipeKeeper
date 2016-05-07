@@ -8,9 +8,13 @@
     android:title="@string/label_actionNewRecipe"
     android:showAsAction="ifRoom"/>
   <item
-    android:id="@+id/actionManageUOM"
-    android:title="@string/label_manage_uoms"
-      android:showAsAction="ifRoom"/>
+    android:id="@+id/actionManageCategories"
+    android:title="@string/label_actionManageUnitsOfMeasure"
+    android:showAsAction="ifRoom"/>
+  <item
+    android:id="@+id/actionManageUnitsOfMeasure"
+    android:title="@string/label_actionManageUnitsOfMeasure"
+    android:showAsAction="ifRoom"/>
   <item
     android:id="@+id/action_export"
     android:title="@string/label_actionExport"

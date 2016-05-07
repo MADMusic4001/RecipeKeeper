@@ -35,7 +35,6 @@ import com.madinnovations.recipekeeper.R;
 import com.madinnovations.recipekeeper.controller.events.LoadRecipesEvent;
 import com.madinnovations.recipekeeper.controller.events.RecipeSelectedEvent;
 import com.madinnovations.recipekeeper.controller.events.RecipesLoadedEvent;
-import com.madinnovations.recipekeeper.controller.events.SaveRecipeEvent;
 import com.madinnovations.recipekeeper.model.entities.Recipe;
 import com.madinnovations.recipekeeper.model.utils.IntentConstants;
 import com.madinnovations.recipekeeper.view.activities.recipeDetail.RecipeDetailActivity;
