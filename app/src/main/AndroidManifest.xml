@@ -32,7 +32,7 @@
         android:value=".view.activities.recipesList.RecipesListActivity"/>
     </activity>
     <activity android:name=".view.activities.unitsOfMeasure.UnitsOfMeasureActivity"
-              android:label="@string/label_manage_uoms"
+              android:label="@string/label_actionManageUnitsOfMeasure"
               android:parentActivityName=".view.activities.recipesList.RecipesListActivity"
               tools:ignore="UnusedAttribute"
               android:windowSoftInputMode="adjustPan">

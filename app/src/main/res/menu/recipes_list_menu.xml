@@ -9,7 +9,7 @@
     android:showAsAction="ifRoom"/>
   <item
     android:id="@+id/actionManageCategories"
-    android:title="@string/label_actionManageUnitsOfMeasure"
+    android:title="@string/label_actionManageCategories"
     android:showAsAction="ifRoom"/>
   <item
     android:id="@+id/actionManageUnitsOfMeasure"

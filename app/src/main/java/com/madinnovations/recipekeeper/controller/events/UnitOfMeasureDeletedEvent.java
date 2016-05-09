@@ -18,22 +18,29 @@ package com.madinnovations.recipekeeper.controller.events;
 import com.madinnovations.recipekeeper.model.entities.UnitOfMeasure;
 
 /**
- * Event requesting that Recipes be loaded from persistent storage.
+ * Event signifying the result of a request to delete a UnitOfMeasure instance from persistent storage.
  */
-public class LoadUnitsOfMeasureEvent {
-	private UnitOfMeasure filter;
+public class UnitOfMeasureDeletedEvent {
+	private boolean successful;
+	private UnitOfMeasure unitOfMeasure;
 
 	/**
-	 * Creates a new LoadUnitsOfMeasureEvent with the given UnitOfMeasure to be used to filter results.
+	 * Creates a UnitOfMeasureDeletedEvent instance with the given status and the filter for the instances that were to be
+	 * deleted.
 	 *
-	 * @param filter  a Recipe instance to use as a filter
+	 * @param successful  true if the delete was successful, otherwise false
+	 * @param unitOfMeasure  the filter for the instances to be deleted
 	 */
-	public LoadUnitsOfMeasureEvent(UnitOfMeasure filter) {
-		this.filter = filter;
+	public UnitOfMeasureDeletedEvent(boolean successful, UnitOfMeasure unitOfMeasure) {
+		this.successful = successful;
+		this.unitOfMeasure = unitOfMeasure;
 	}
 
 	// Getters
-	public UnitOfMeasure getFilter() {
-		return filter;
+	public boolean isSuccessful() {
+		return successful;
+	}
+	public UnitOfMeasure getUnitOfMeasure() {
+		return unitOfMeasure;
 	}
 }

@@ -34,7 +34,7 @@ import javax.inject.Inject;
  */
 @PerActivity
 public class UnitOfMeasureListAdapter extends ArrayAdapter<UnitOfMeasure> {
-	private static final int LAYOUT_RESOURCE_ID = R.layout.recipe_list_row;
+	private static final int LAYOUT_RESOURCE_ID = R.layout.units_of_measure_list_row;
 	private LayoutInflater layoutInflater;
 	private int[] colors = new int[]{
 			R.color.list_even_row_background,

@@ -26,11 +26,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.madinnovations.recipekeeper.R;
-import com.madinnovations.recipekeeper.controller.events.SaveRecipeEvent;
-import com.madinnovations.recipekeeper.controller.events.SaveUnitOfMeasureEvent;
+import com.madinnovations.recipekeeper.controller.events.UnitOfMeasurePersistenceEvent;
 import com.madinnovations.recipekeeper.controller.events.UnitOfMeasureSavedEvent;
 import com.madinnovations.recipekeeper.controller.events.UnitOfMeasureSelectedEvent;
-import com.madinnovations.recipekeeper.model.entities.Recipe;
 import com.madinnovations.recipekeeper.model.entities.UnitOfMeasure;
 import com.madinnovations.recipekeeper.model.utils.StringUtils;
 import com.madinnovations.recipekeeper.view.di.modules.FragmentModule;
@@ -38,8 +36,6 @@ import com.madinnovations.recipekeeper.view.di.modules.FragmentModule;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.Calendar;
 
 import javax.inject.Inject;
 
@@ -87,9 +83,42 @@ public class UnitOfMeasureDetailFragment extends Fragment{
 		pluralNameEdit = (EditText)layout.findViewById(R.id.uom_label_plural_name_edit);
 		notesEdit = (EditText)layout.findViewById(R.id.uom_label_notes_edit);
 		saveButton = (Button)layout.findViewById(R.id.uom_save_button);
-
+		if(unitOfMeasure == null) {
+			unitOfMeasure = new UnitOfMeasure();
+		}
 		initSaveButton();
 		return layout;
+	}
+
+	/**
+	 * Responds to UnitOfMeasureSelectedEvent by copying the select UnitOfMeasure instance to the UI fields.
+	 *
+	 * @param event  a UnitOfMeasureSelectedEvent instance
+	 */
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void onUnitOfMeasureSelected(UnitOfMeasureSelectedEvent event) {
+		unitOfMeasure = event.getUnitOfMeasure();
+		copyUnitOfMeasureToView();
+	}
+
+	/**
+	 * Responds to UnitOfMeasureSavedEvent by displaying a toast informing the user of the result and, if the save was successful, it also
+	 * copies the save UnitOfMeasure instance to the UI fields.
+	 *
+	 * @param event  a UnitOfMeasureSavedEvent instance
+	 */
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void onUnitOfMeasureSaved(UnitOfMeasureSavedEvent event) {
+		String toastString;
+
+		if(event.isSuccess()) {
+			unitOfMeasure = event.getUnitOfMeasure();
+			copyUnitOfMeasureToView();
+			toastString = getString(R.string.toast_uom_saved);
+		} else {
+			toastString = getString(R.string.toast_uom_saved_error);
+		}
+		Toast.makeText(getActivity(), toastString, Toast.LENGTH_SHORT).show();
 	}
 
 	private void initSaveButton() {
@@ -106,18 +135,23 @@ public class UnitOfMeasureDetailFragment extends Fragment{
 				newUom.setNotes(unitOfMeasure.getNotes());
 
 				String value = singularNameEdit.getText().toString();
-				if(value == null || value.isEmpty()) {
+				if(value.isEmpty()) {
 					singularNameEdit.setError(getString(R.string.error_required));
 					errors = true;
 				} else if(!value.equals(unitOfMeasure.getSingularName())) {
 					newUom.setSingularName(value);
 					changed = true;
 				}
+
 				value = pluralNameEdit.getText().toString();
-				if(!StringUtils.equals(value, unitOfMeasure.getPluralName())) {
+				if(value == null || value.isEmpty()) {
+					pluralNameEdit.setError(getString(R.string.error_required));
+					errors = true;
+				} else if(!value.equals(unitOfMeasure.getPluralName())) {
 					newUom.setPluralName(value);
 					changed = true;
 				}
+
 				value = notesEdit.getText().toString();
 				if(!StringUtils.equals(value, unitOfMeasure.getNotes())) {
 					newUom.setNotes(value);
@@ -125,41 +159,10 @@ public class UnitOfMeasureDetailFragment extends Fragment{
 				}
 
 				if(changed && !errors) {
-					eventBus.post(new SaveUnitOfMeasureEvent(newUom));
+					eventBus.post(new UnitOfMeasurePersistenceEvent(UnitOfMeasurePersistenceEvent.Action.SAVE, newUom));
 				}
 			}
 		});
-	}
-
-	/**
-	 * Responds to UnitOfMeasureSelectedEvent by copying the select UnitOfMeasure instance to the UI fields.
-	 *
-	 * @param event  a UnitOfMeasureSelectedEvent instance
-     */
-	@Subscribe(threadMode = ThreadMode.MAIN)
-	public void onUnitOfMeasureSelected(UnitOfMeasureSelectedEvent event) {
-		unitOfMeasure = event.getUnitOfMeasure();
-		copyUnitOfMeasureToView();
-	}
-
-	/**
-	 * Responds to UnitOfMeasureSavedEvent by displaying a toast informing the user of the result and, if the save was successful, it also
-	 * copies the save UnitOfMeasure instance to the UI fields.
-	 *
-	 * @param event  a UnitOfMeasureSavedEvent instance
-     */
-	@Subscribe(threadMode = ThreadMode.MAIN)
-	public void onUnitOfMeasureSaved(UnitOfMeasureSavedEvent event) {
-		String toastString;
-
-		if(event.isSuccess()) {
-			unitOfMeasure = event.getUnitOfMeasure();
-			copyUnitOfMeasureToView();
-			toastString = getString(R.string.toast_uom_saved);
-		} else {
-			toastString = getString(R.string.toast_uom_saved_error);
-		}
-		Toast.makeText(getActivity(), toastString, Toast.LENGTH_SHORT).show();
 	}
 
 	private void copyUnitOfMeasureToView() {
@@ -175,20 +178,12 @@ public class UnitOfMeasureDetailFragment extends Fragment{
 	}
 
 	// Getters and setters
-	public void setEventBus(EventBus eventBus) {
-		this.eventBus = eventBus;
-	}
-
-	public EventBus getEventBus() {
-		return eventBus;
-	}
-
 	public UnitOfMeasure getUnitOfMeasure() {
 		return unitOfMeasure;
 	}
-
 	public void setUnitOfMeasure(UnitOfMeasure unitOfMeasure) {
 		this.unitOfMeasure = unitOfMeasure;
+		copyUnitOfMeasureToView();
 	}
 }
 

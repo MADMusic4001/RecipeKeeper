@@ -16,11 +16,11 @@
 package com.madinnovations.recipekeeper.view.activities.unitsOfMeasure;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -28,7 +28,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.madinnovations.recipekeeper.R;
-import com.madinnovations.recipekeeper.controller.events.LoadUnitsOfMeasureEvent;
+import com.madinnovations.recipekeeper.controller.events.UnitOfMeasureDeletedEvent;
+import com.madinnovations.recipekeeper.controller.events.UnitOfMeasurePersistenceEvent;
+import com.madinnovations.recipekeeper.controller.events.UnitOfMeasureSavedEvent;
 import com.madinnovations.recipekeeper.controller.events.UnitOfMeasureSelectedEvent;
 import com.madinnovations.recipekeeper.controller.events.UnitsOfMeasureLoadedEvent;
 import com.madinnovations.recipekeeper.model.entities.UnitOfMeasure;
@@ -75,9 +77,40 @@ public class UnitsOfMeasureListFragment extends Fragment {
 	}
 
 	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		super.onCreateOptionsMenu(menu, inflater);
-		inflater.inflate(R.menu.units_of_measure_menu, menu);
+	public void onCreateContextMenu(ContextMenu contextMenu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(contextMenu, v, menuInfo);
+		getActivity().getMenuInflater().inflate(R.menu.unit_of_measure_list_context_menu, contextMenu);
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		UnitOfMeasure unitOfMeasure;
+
+		AdapterView.AdapterContextMenuInfo info =
+				(AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+
+		switch (item.getItemId()) {
+			case R.id.uom_context_edit:
+				unitOfMeasure = (UnitOfMeasure) listView.getItemAtPosition(info.position);
+				if(unitOfMeasure != null) {
+					eventBus.post(new UnitOfMeasureSelectedEvent(unitOfMeasure));
+					return true;
+				}
+				else {
+					return false;
+				}
+			case R.id.uom_context_delete:
+				unitOfMeasure = (UnitOfMeasure) listView.getItemAtPosition(info.position);
+				if(unitOfMeasure != null) {
+					eventBus.post(new UnitOfMeasurePersistenceEvent(UnitOfMeasurePersistenceEvent.Action.DELETE, unitOfMeasure));
+					return true;
+				}
+				else {
+					return false;
+				}
+			default:
+				return super.onContextItemSelected(item);
+		}
 	}
 
 	@Override
@@ -87,13 +120,18 @@ public class UnitsOfMeasureListFragment extends Fragment {
 		if(!eventBus.isRegistered(this)) {
 			eventBus.register(this);
 		}
-		View layout = inflater.inflate(R.layout.unit_of_measure_detail_fragment, container, false);
+		View layout = inflater.inflate(R.layout.units_of_measure_list_fragment, container, false);
 		listView = (ListView)layout.findViewById(R.id.uomList);
 		initListView();
-		eventBus.post(new LoadUnitsOfMeasureEvent(null));
+		eventBus.post(new UnitOfMeasurePersistenceEvent(UnitOfMeasurePersistenceEvent.Action.READ_BY_FILTER, null));
 		return layout;
 	}
 
+	/**
+	 * Sets the list of UnitOfMeasure instances in the display list.
+	 *
+	 * @param event  a UnitsOfMeasureLoadedEveny instance
+	 */
 	@Subscribe(threadMode = ThreadMode.MAIN)
 	public void onUnitsOfMeasureLoadedEvent(UnitsOfMeasureLoadedEvent event) {
 		String toastString;
@@ -101,7 +139,6 @@ public class UnitsOfMeasureListFragment extends Fragment {
 		adapter.clear();
 		if(event.isSuccessful()) {
 			toastString = getString(R.string.toast_units_of_measure_loaded);
-			Log.d("RecipesListFragment", event.getUnitsOfMeasureSet().size() + " recipes loaded.");
 			adapter.addAll(event.getUnitsOfMeasureSet());
 		} else {
 			toastString = getString(R.string.toast_units_of_measure_loaded_error);
@@ -110,42 +147,52 @@ public class UnitsOfMeasureListFragment extends Fragment {
 		Toast.makeText(getActivity(), toastString, Toast.LENGTH_SHORT).show();
 	}
 
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void onUnitOfMeasureDeleted(UnitOfMeasureDeletedEvent event) {
+		String toastString;
+
+		if(event.isSuccessful()) {
+			toastString = getString(R.string.toast_unit_of_measure_deleted);
+			adapter.remove(event.getUnitOfMeasure());
+			adapter.notifyDataSetChanged();
+		} else {
+			toastString = getString(R.string.toast_unit_of_measure_deleted_error);
+		}
+	}
+
+	/**
+	 * Adds newly saved UnitOfMeasure instances to the display list
+	 *
+	 * @param event  a UnitOfMeasureSavedEvent instance
+	 */
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void onUnitOfMeasureSaved(UnitOfMeasureSavedEvent event) {
+		if(event.isSuccess()) {
+			adapter.add(event.getUnitOfMeasure());
+			adapter.notifyDataSetChanged();
+		}
+	}
+
 	private void initListView() {
 		View headerView;
 
 		headerView = getActivity().getLayoutInflater().inflate(
-				R.layout.recipes_list_header, listView, false);
+				R.layout.units_of_measure_list_header, listView, false);
 		listView.addHeaderView(headerView);
 
 		// Create and set onClick methods for sorting the {@link World} list.
-		headerView.findViewById(R.id.nameHeader).setOnClickListener(new View.OnClickListener() {
+		headerView.findViewById(R.id.singularNameHeader).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 //				controller.sortRecipesByName();
 			}
 		});
-		headerView.findViewById(R.id.categoriesHeader).setOnClickListener(new View.OnClickListener() {
+		headerView.findViewById(R.id.pluralNameHeader).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 //				controller.sortRecipesByCategories();
 			}
 		});
-		headerView.findViewById(R.id.createdHeader).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-//				controller.sortRecipesByCreated();
-			}
-		});
-		View updatedView = headerView.findViewById(R.id.updatedHeader);
-		if(updatedView != null) {
-			updatedView.setOnClickListener(new View.OnClickListener
-					() {
-				@Override
-				public void onClick(View v) {
-//					controller.sortRecipesByUpdated();
-				}
-			});
-		}
 		listView.setAdapter(adapter);
 
 		// Clicking a row in the listView will send the user to the recipes details activity

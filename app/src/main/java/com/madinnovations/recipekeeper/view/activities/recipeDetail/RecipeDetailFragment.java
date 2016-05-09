@@ -19,6 +19,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -245,6 +246,8 @@ public class RecipeDetailFragment extends Fragment {
 
 	@Subscribe(threadMode = ThreadMode.MAIN)
 	public void onRecipeSelectedEvent(RecipeSelectedEvent event) {
+		Log.i("RecipeDetailFragment", "Existing recipe ID = " + recipe.getId());
+		Log.i("RecipeDetailFragment", "New recipe ID = " + event.getRecipe().getId());
 		this.recipe = event.getRecipe();
 		copyRecipeToView();
 	}
@@ -254,6 +257,7 @@ public class RecipeDetailFragment extends Fragment {
 		String toastString;
 
 		if(event.isSuccess()) {
+			Log.e("RecipeDetailFragment", "Saved recipe ID = " + event.getRecipe().getId());
 			this.recipe = event.getRecipe();
 			copyRecipeToView();
 			toastString = getString(R.string.toast_recipe_saved);

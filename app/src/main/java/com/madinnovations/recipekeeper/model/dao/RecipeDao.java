@@ -53,5 +53,5 @@ public interface RecipeDao {
 	 * @param id  the unique id of the Recipe to read
 	 * @return  the Recipe with matching id or null if not found.
 	 */
-	public Recipe read(int id);
+	public Recipe read(long id);
 }

@@ -86,7 +86,7 @@ public class CategoryDaoSqlImpl implements BaseDaoSql, CategoryDao {
 	}
 
 	@Override
-	public Category read(int id) {
+	public Category read(long id) {
 		return null;
 	}
 }

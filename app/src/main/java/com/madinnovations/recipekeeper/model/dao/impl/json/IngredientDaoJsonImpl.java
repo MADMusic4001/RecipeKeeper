@@ -47,7 +47,7 @@ public class IngredientDaoJsonImpl implements BaseDaoJson, IngredientDao {
     }
 
     @Override
-    public Ingredient read(int id) {
+    public Ingredient read(long id) {
         return null;
     }
 }

@@ -19,6 +19,7 @@ import android.util.Log;
 
 import com.activeandroid.app.Application;
 import com.madinnovations.recipekeeper.controller.eventhandlers.RecipeEventHandler;
+import com.madinnovations.recipekeeper.controller.eventhandlers.UnitOfMeasureEventHandler;
 import com.madinnovations.recipekeeper.view.di.components.ApplicationComponent;
 import com.madinnovations.recipekeeper.view.di.components.DaggerApplicationComponent;
 import com.madinnovations.recipekeeper.view.di.modules.ApplicationModule;
@@ -37,6 +38,8 @@ public class RecipeKeeperApp extends Application {
 	private ApplicationComponent applicationComponent;
 	@Inject
 	RecipeEventHandler recipeEventHandler;
+	@Inject
+	UnitOfMeasureEventHandler unitOfMeasureEventHandler;
 
 	@Override
 	public void onCreate() {
@@ -49,8 +52,6 @@ public class RecipeKeeperApp extends Application {
 				.eventHandlerModule(new EventHandlerModule())
 				.applicationModule(new ApplicationModule(this))
 				.build();
-		Log.d("RecipeKeeperApp", "RecipeEventHandler = " + recipeEventHandler);
-		Log.d("RecipeKeeperApp", "ApplicationComponent successfully created.");
 	}
 
 	public ApplicationComponent getApplicationComponent() {

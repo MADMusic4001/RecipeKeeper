@@ -16,11 +16,18 @@
 package com.madinnovations.recipekeeper.view.activities.unitsOfMeasure;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.madinnovations.recipekeeper.R;
+import com.madinnovations.recipekeeper.controller.eventhandlers.UnitOfMeasureEventHandler;
 import com.madinnovations.recipekeeper.controller.events.UnitOfMeasureSelectedEvent;
+import com.madinnovations.recipekeeper.model.entities.UnitOfMeasure;
 import com.madinnovations.recipekeeper.view.RecipeKeeperApp;
+import com.madinnovations.recipekeeper.view.activities.recipesList.RecipesListActivity;
 import com.madinnovations.recipekeeper.view.di.components.ActivityComponent;
 import com.madinnovations.recipekeeper.view.di.modules.ActivityModule;
 
@@ -35,6 +42,8 @@ import javax.inject.Inject;
 public class UnitsOfMeasureActivity extends Activity {
 	@Inject
 	protected EventBus eventBus;
+	@Inject
+	protected UnitOfMeasureEventHandler unitOfMeasureEventHandler;
 	private ActivityComponent    activityComponent;
 	private UnitsOfMeasureListFragment listFragment;
 	private UnitOfMeasureDetailFragment detailFragment;
@@ -71,6 +80,34 @@ public class UnitsOfMeasureActivity extends Activity {
 		listFragment = (UnitsOfMeasureListFragment) getFragmentManager().findFragmentById(R.id.units_of_measure_list_fragment);
 		detailFragment = (UnitOfMeasureDetailFragment) getFragmentManager().findFragmentById(R.id.unit_of_measure_detail_fragment);
 		dualPane = (detailFragment != null);
+		if(!dualPane) {
+			listFragment = new UnitsOfMeasureListFragment();
+			FragmentTransaction transaction = getFragmentManager().beginTransaction();
+			transaction.replace(R.id.unitOfMeasureFragmentContainer, listFragment);
+			transaction.commit();
+		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.units_of_measure_menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		boolean result = false;
+
+		int id = item.getItemId();
+		if(id == R.id.actionNewUnitOfMeasure){
+			eventBus.post(new UnitOfMeasureSelectedEvent(new UnitOfMeasure()));
+			result = true;
+		}
+		if(id == R.id.actionManageRecipes){
+			Intent intent = new Intent(getApplicationContext(), RecipesListActivity.class);
+			startActivity(intent);
+		}
+		return result || super.onOptionsItemSelected(item);
 	}
 
 	@Subscribe
@@ -80,13 +117,12 @@ public class UnitsOfMeasureActivity extends Activity {
 				detailFragment = new UnitOfMeasureDetailFragment();
 			}
 			getFragmentManager().beginTransaction()
+					.hide(listFragment)
 					.add(R.id.unitOfMeasureFragmentContainer, detailFragment)
-					.addToBackStack(null)
+					.addToBackStack("listFragment")
 					.commit();
-			listFragment = null;
 		}
 		detailFragment.setUnitOfMeasure(event.getUnitOfMeasure());
-
 	}
 
 	// Getters and setters

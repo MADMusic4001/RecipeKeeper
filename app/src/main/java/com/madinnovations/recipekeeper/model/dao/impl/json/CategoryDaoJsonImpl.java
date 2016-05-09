@@ -47,7 +47,7 @@ public class CategoryDaoJsonImpl implements BaseDaoJson, CategoryDao {
     }
 
     @Override
-    public Category read(int id) {
+    public Category read(long id) {
         return null;
     }
 }

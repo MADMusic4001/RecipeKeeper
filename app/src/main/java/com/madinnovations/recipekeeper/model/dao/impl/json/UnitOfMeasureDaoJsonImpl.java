@@ -47,7 +47,7 @@ public class UnitOfMeasureDaoJsonImpl implements BaseDaoJson, UnitOfMeasureDao {
     }
 
     @Override
-    public UnitOfMeasure read(int id) {
+    public UnitOfMeasure read(long id) {
         return null;
     }
 }

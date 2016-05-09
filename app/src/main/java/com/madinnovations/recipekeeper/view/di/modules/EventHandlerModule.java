@@ -16,7 +16,9 @@
 package com.madinnovations.recipekeeper.view.di.modules;
 
 import com.madinnovations.recipekeeper.controller.eventhandlers.RecipeEventHandler;
+import com.madinnovations.recipekeeper.controller.eventhandlers.UnitOfMeasureEventHandler;
 import com.madinnovations.recipekeeper.model.dao.RecipeDao;
+import com.madinnovations.recipekeeper.model.dao.UnitOfMeasureDao;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -36,6 +38,13 @@ public class EventHandlerModule {
 	@Provides @Singleton
 	RecipeEventHandler provideRecipeEventHandler(EventBus eventBus, RecipeDao recipeDao) {
 		RecipeEventHandler handler = new RecipeEventHandler(eventBus, recipeDao);
+		eventBus.register(handler);
+		return handler;
+	}
+
+	@Provides @Singleton
+	UnitOfMeasureEventHandler provideUnitOfMeasureEventHandler(EventBus eventBus, UnitOfMeasureDao unitOfMeasureDao) {
+		UnitOfMeasureEventHandler handler = new UnitOfMeasureEventHandler(eventBus, unitOfMeasureDao);
 		eventBus.register(handler);
 		return handler;
 	}

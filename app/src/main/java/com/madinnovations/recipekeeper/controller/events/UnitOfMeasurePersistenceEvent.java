@@ -18,21 +18,31 @@ package com.madinnovations.recipekeeper.controller.events;
 import com.madinnovations.recipekeeper.model.entities.UnitOfMeasure;
 
 /**
- * Event indicating a {@link UnitOfMeasure} needs to be saved.
+ * ${CLASS_DESCRIPTION}
+ *
+ * @author Mark
+ * Created 5/9/2016.
  */
-public class SaveUnitOfMeasureEvent {
+public class UnitOfMeasurePersistenceEvent {
+	public enum Action {
+		SAVE,
+		READ_BY_ID,
+		READ_BY_FILTER,
+		DELETE
+	}
+	private Action action;
 	private UnitOfMeasure unitOfMeasure;
 
-	/**
-	 * Creates a new SaveUnitOfMeasureEvent instance with the given UnitOfMeasure
-	 *
-	 * @param unitOfMeasure  the UnitOfMeasure to save
-	 */
-	public SaveUnitOfMeasureEvent(UnitOfMeasure unitOfMeasure) {
+	public UnitOfMeasurePersistenceEvent(
+			Action action, UnitOfMeasure unitOfMeasure) {
+		this.action = action;
 		this.unitOfMeasure = unitOfMeasure;
 	}
 
-	// Getter
+	public Action getAction() {
+		return action;
+	}
+
 	public UnitOfMeasure getUnitOfMeasure() {
 		return unitOfMeasure;
 	}

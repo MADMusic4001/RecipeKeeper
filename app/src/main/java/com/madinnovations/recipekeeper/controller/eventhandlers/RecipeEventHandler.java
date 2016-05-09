@@ -15,8 +15,6 @@
  */
 package com.madinnovations.recipekeeper.controller.eventhandlers;
 
-import android.util.Log;
-
 import com.madinnovations.recipekeeper.controller.events.LoadRecipesEvent;
 import com.madinnovations.recipekeeper.controller.events.RecipeSavedEvent;
 import com.madinnovations.recipekeeper.controller.events.RecipesLoadedEvent;
@@ -30,7 +28,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Set;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
@@ -42,9 +39,10 @@ public class RecipeEventHandler {
 	private RecipeDao recipeDao;
 
 	/**
-	 * Creates a new RecioeEventHandler instance configured with the given {@link EventBus} instance
+	 * Creates a new RecipeEventHandler instance configured with the given {@link EventBus} and {@link RecipeDao} instances.
 	 *
 	 * @param eventBus  an EventBus instance
+	 * @param recipeDao  a RecipeDao instance
 	 */
 	public RecipeEventHandler(EventBus eventBus, RecipeDao recipeDao) {
 		this.eventBus = eventBus;
@@ -58,7 +56,6 @@ public class RecipeEventHandler {
 	 */
 	@Subscribe(threadMode = ThreadMode.ASYNC)
 	public void onSaveRecipeEvent(SaveRecipeEvent event) {
-		Log.d("RecipeEventHandler", "SaveRecipeEvent received. " + event);
 		boolean result = recipeDao.save(event.getRecipe());
 		eventBus.post(new RecipeSavedEvent(event.getRecipe(), result));
 	}
@@ -70,9 +67,7 @@ public class RecipeEventHandler {
 	 */
 	@Subscribe(threadMode = ThreadMode.ASYNC)
 	public void onLoadRecipesEvent(LoadRecipesEvent event) {
-		Log.d("RecipeEventHandler", "LoadRecipesEvent received. " + event);
 		Set<Recipe> results = recipeDao.read(event.getFilter());
-		Log.d("RecipeEventHandler", "LoadRecipesEvent results = " + results);
 		eventBus.post(new RecipesLoadedEvent(results, results != null));
 	}
 }

@@ -11,6 +11,8 @@
   <string name="toast_uom_saved_error">Error saving unit of measure</string>
   <string name="toast_units_of_measure_loaded">Units of Measure successfully loaded</string>
   <string name="toast_units_of_measure_loaded_error">Error loading units of measure</string>
+  <string name="toast_unit_of_measure_deleted">Unit(s) of Measure successfully deleted</string>
+  <string name="toast_unit_of_measure_deleted_error">Error deleting unit(s) of measure</string>
 
   <!-- Widget Labels -->
   <string name="label_actionExport">Export all data</string>
@@ -26,6 +28,8 @@
   <string name="label_created">Created</string>
   <string name="label_description">Description</string>
   <string name="label_directions">Directions</string>
+  <string name="label_delete">Delete</string>
+  <string name="label_edit">Edit</string>
   <string name="label_ingredient">Ingredient</string>
   <string name="label_ingredients">Ingredients</string>
   <string name="label_name">Name</string>

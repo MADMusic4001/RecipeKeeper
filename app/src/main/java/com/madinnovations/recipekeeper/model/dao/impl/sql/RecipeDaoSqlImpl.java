@@ -133,12 +133,13 @@ public class RecipeDaoSqlImpl implements BaseDaoSql, RecipeDao {
 		try {
 			if (recipe.getId() == DataConstants.UNINITIALIZED) {
 				recipe.setId(sqlHelper.getWritableDatabase().insert(RecipeContract.TABLE_NAME, null, values));
+				Log.e("RecipeDaoSqlImpl", "New recipe id = " + recipe.getId());
 				result = (recipe.getId() != DataConstants.UNINITIALIZED);
 			}
 			else {
 				values.put("_id", recipe.getId());
 				int count = sqlHelper.getWritableDatabase().update(RecipeContract.TABLE_NAME, values,
-																   WHERE + SPACE + RecipeContract._ID + EQUALS + PLACEHOLDER,
+																   RecipeContract._ID + EQUALS + PLACEHOLDER,
 																   new String[]{Long.valueOf(recipe.getId()).toString()});
 				result = (count == 1);
 			}
@@ -223,7 +224,7 @@ public class RecipeDaoSqlImpl implements BaseDaoSql, RecipeDao {
 
 	@Override
 	public Set<Recipe> read(Recipe filter) {
-		Log.d("RecipeDaoSqlImpl", "Reading recipes filtered by " + filter);
+		Log.e("RecipeDaoSqlImpl", "Reading recipes filtered by " + filter);
 		Set<Recipe> result = new HashSet<>();
 		List<String> whereArgsList = new ArrayList<>();
 		String whereClause = buildWhereArgs(filter, whereArgsList);
@@ -237,6 +238,7 @@ public class RecipeDaoSqlImpl implements BaseDaoSql, RecipeDao {
 			while(!cursor.isAfterLast()) {
 				Recipe aRecipe = createRecipeInstance(cursor);
 				result.add(aRecipe);
+				cursor.moveToNext();
 			}
 			cursor.close();
 			sqlHelper.getWritableDatabase().setTransactionSuccessful();
@@ -244,12 +246,12 @@ public class RecipeDaoSqlImpl implements BaseDaoSql, RecipeDao {
 		finally {
 			sqlHelper.getWritableDatabase().endTransaction();
 		}
-		Log.d("RecipeDaoSqlImpl", "Loaded " + result);
+		Log.e("RecipeDaoSqlImpl", "Loaded " + result.size() + " recipes.");
 		return result;
 	}
 
 	@Override
-	public Recipe read(int id) {
+	public Recipe read(long id) {
 		Log.d("RecipeDaoSqlImpl", "Reading recipe for id = " + id);
 		Recipe result = null;
 		String whereClause = RecipeContract._ID + EQUALS + PLACEHOLDER;

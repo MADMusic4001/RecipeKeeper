@@ -53,5 +53,5 @@ public interface CategoryDao {
 	 * @param id  the unique id of the Category to read
 	 * @return  the Category with matching id or null if not found.
 	 */
-	public Category read(int id);
+	public Category read(long id);
 }

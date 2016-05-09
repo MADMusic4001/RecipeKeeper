@@ -53,5 +53,5 @@ public interface UnitOfMeasureDao {
 	 * @param id  the unique id of the UnitOfMeasure to read
 	 * @return  the UnitOfMeasure with matching id or null if not found.
 	 */
-	public UnitOfMeasure read(int id);
+	public UnitOfMeasure read(long id);
 }

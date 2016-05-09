@@ -53,5 +53,5 @@ public interface IngredientDao {
 	 * @param id  the unique id of the Ingredient to read
 	 * @return  the Ingredient with matching id or null if not found.
 	 */
-	public Ingredient read(int id);
+	public Ingredient read(long id);
 }

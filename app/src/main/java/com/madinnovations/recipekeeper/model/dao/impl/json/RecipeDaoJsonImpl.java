@@ -53,7 +53,7 @@ public class RecipeDaoJsonImpl implements BaseDaoJson, RecipeDao {
     }
 
     @Override
-    public Recipe read(int id) {
+    public Recipe read(long id) {
         return null;
     }
 }

@@ -17,6 +17,7 @@ package com.madinnovations.recipekeeper.view.activities.recipesList;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -28,11 +29,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.madinnovations.recipekeeper.R;
 import com.madinnovations.recipekeeper.controller.events.LoadRecipesEvent;
+import com.madinnovations.recipekeeper.controller.events.RecipeSavedEvent;
 import com.madinnovations.recipekeeper.controller.events.RecipeSelectedEvent;
 import com.madinnovations.recipekeeper.controller.events.RecipesLoadedEvent;
 import com.madinnovations.recipekeeper.model.entities.Recipe;
@@ -45,6 +48,8 @@ import com.madinnovations.recipekeeper.view.di.modules.FragmentModule;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -117,7 +122,7 @@ public class RecipesListFragment extends Fragment {
 			eventBus.post(new RecipeSelectedEvent(new Recipe(getString(R.string.default_recipe_name))));
 			result = true;
 		}
-		if(id == R.id.actionManageUOM){
+		if(id == R.id.actionManageUnitsOfMeasure){
 			Intent intent = new Intent(getActivity().getApplicationContext(), UnitsOfMeasureActivity.class);
 			startActivity(intent);
 		}
@@ -135,8 +140,23 @@ public class RecipesListFragment extends Fragment {
 		} else {
 			toastString = getString(R.string.toast_recipes_loaded_error);
 		}
+		Log.e("RecipesListFragment", "Adapter = " + listView.getAdapter());
+		Log.e("RecipesListFragment", "Wrapped adapter = " + ((HeaderViewListAdapter)listView.getAdapter()).getWrappedAdapter());
+		Log.e("RecipesListFragment", "Adapter getCount = " + listView.getAdapter().getCount());
+		Log.e("RecipesListFragment", "Adapter getCount = " + adapter.getCount());
+		Log.e("RecipesListFragment", "Listview visible = " + listView.getVisibility());
 		adapter.notifyDataSetChanged();
 		Toast.makeText(getActivity(), toastString, Toast.LENGTH_SHORT).show();
+	}
+
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void onRecipeSavedEvent(RecipeSavedEvent event) {
+		if(event.isSuccess()) {
+			adapter.add(event.getRecipe());
+			Log.e("RecipesListFragment", "Adapter getCount = " + listView.getAdapter().getCount());
+			Log.e("RecipesListFragment", "Adapter getCount = " + adapter.getCount());
+			adapter.notifyDataSetChanged();
+		}
 	}
 
 	// <editor-fold desc="Private plumbing methods">
@@ -185,17 +205,11 @@ public class RecipesListFragment extends Fragment {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				Recipe theRecipe = (Recipe) listView.getItemAtPosition(position);
 				if (theRecipe != null) {
-					editRecipe(theRecipe);
+					eventBus.post(new RecipeSelectedEvent(theRecipe));
 				}
 			}
 		});
 		registerForContextMenu(listView);
-	}
-
-	private void editRecipe(@NonNull Recipe recipe) {
-		Intent intent = new Intent(getActivity().getApplicationContext(), RecipeDetailActivity.class);
-		intent.putExtra(IntentConstants.RECIPE_DETAIL_INTENT_RECIPE_ID, recipe.getName());
-		startActivity(intent);
 	}
 	// </editor-fold>
 }

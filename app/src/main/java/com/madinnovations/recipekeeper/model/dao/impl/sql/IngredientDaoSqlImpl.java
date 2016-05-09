@@ -151,6 +151,7 @@ public class IngredientDaoSqlImpl implements BaseDaoSql, IngredientDao {
 			while(!cursor.isAfterLast()) {
 				Ingredient anIngredient = createIngredientInstance(cursor);
 				result.add(anIngredient);
+				cursor.moveToNext();
 			}
 			cursor.close();
 			sqlHelper.getWritableDatabase().setTransactionSuccessful();
@@ -163,7 +164,7 @@ public class IngredientDaoSqlImpl implements BaseDaoSql, IngredientDao {
 	}
 
 	@Override
-	public Ingredient read(int id) {
+	public Ingredient read(long id) {
 		return null;
 	}
 

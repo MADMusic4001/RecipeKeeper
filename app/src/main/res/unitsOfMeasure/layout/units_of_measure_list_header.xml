@@ -2,40 +2,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="horizontal"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:weightSum="2">
 
   <TextView
-      android:id="@+id/nameHeader"
-      android:text="@string/label_name"
+      android:id="@+id/singularNameHeader"
+      android:text="@string/label_singular_name"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
-      android:layout_weight="5"
+      android:layout_weight="1"
       android:gravity="start"
       android:textStyle="bold"
       android:textAppearance="?android:attr/textAppearanceSmall"
       android:textColor="#FFFFFF"
       android:padding="10dp"
       android:background="#336699"/>
-
   <TextView
-      android:id="@+id/categoriesHeader"
-      android:text="@string/label_categories"
+      android:id="@+id/pluralNameHeader"
+      android:text="@string/label_plural_name"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
-      android:layout_weight="4"
-      android:gravity="center"
-      android:textStyle="bold"
-      android:textAppearance="?android:attr/textAppearanceSmall"
-      android:textColor="#FFFFFF"
-      android:padding="10dp"
-      android:background="#336699"/>
-  <TextView
-      android:id="@+id/createdHeader"
-      android:text="@string/label_created"
-      android:layout_width="0dp"
-      android:layout_height="wrap_content"
-      android:layout_weight="4"
-      android:gravity="center"
+      android:layout_weight="1"
+      android:gravity="start"
       android:textStyle="bold"
       android:textAppearance="?android:attr/textAppearanceSmall"
       android:textColor="#FFFFFF"
