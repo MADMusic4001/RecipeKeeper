@@ -15,6 +15,7 @@
  */
 package com.madinnovations.recipekeeper.view.di.components;
 
+import com.madinnovations.recipekeeper.view.activities.category.CategoriesActivity;
 import com.madinnovations.recipekeeper.view.activities.recipeDetail.RecipeDetailActivity;
 import com.madinnovations.recipekeeper.view.activities.recipesList.RecipesListActivity;
 import com.madinnovations.recipekeeper.view.activities.unitsOfMeasure.UnitsOfMeasureActivity;
@@ -38,4 +39,5 @@ public interface ActivityComponent {
 	void injectInto(RecipesListActivity activity);
 	void injectInto(RecipeDetailActivity activity);
 	void injectInto(UnitsOfMeasureActivity activity);
+	void injectInto(CategoriesActivity activity);
 }

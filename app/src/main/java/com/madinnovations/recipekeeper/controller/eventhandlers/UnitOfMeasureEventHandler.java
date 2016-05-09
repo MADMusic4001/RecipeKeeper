@@ -15,11 +15,11 @@
  */
 package com.madinnovations.recipekeeper.controller.eventhandlers;
 
-import com.madinnovations.recipekeeper.controller.events.UnitOfMeasureDeletedEvent;
-import com.madinnovations.recipekeeper.controller.events.UnitOfMeasurePersistenceEvent;
-import com.madinnovations.recipekeeper.controller.events.UnitOfMeasureSavedEvent;
-import com.madinnovations.recipekeeper.controller.events.UnitOfMeasureSelectedEvent;
-import com.madinnovations.recipekeeper.controller.events.UnitsOfMeasureLoadedEvent;
+import com.madinnovations.recipekeeper.controller.events.unitofmeasure.UnitOfMeasureDeletedEvent;
+import com.madinnovations.recipekeeper.controller.events.unitofmeasure.UnitOfMeasurePersistenceEvent;
+import com.madinnovations.recipekeeper.controller.events.unitofmeasure.UnitOfMeasureSavedEvent;
+import com.madinnovations.recipekeeper.controller.events.unitofmeasure.UnitOfMeasureSelectedEvent;
+import com.madinnovations.recipekeeper.controller.events.unitofmeasure.UnitsOfMeasureLoadedEvent;
 import com.madinnovations.recipekeeper.model.dao.UnitOfMeasureDao;
 import com.madinnovations.recipekeeper.model.entities.UnitOfMeasure;
 

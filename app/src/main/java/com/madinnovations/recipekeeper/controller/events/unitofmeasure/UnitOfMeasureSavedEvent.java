@@ -13,26 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.madinnovations.recipekeeper.controller.events;
+package com.madinnovations.recipekeeper.controller.events.unitofmeasure;
 
 import com.madinnovations.recipekeeper.model.entities.UnitOfMeasure;
 
 /**
- * Event indicating a {@link UnitOfMeasure} was selected from the list of recipes.
+ * ${CLASS_DESCRIPTION}
+ *
+ * @author Mark
+ * Created 5/5/2016.
  */
-public class UnitOfMeasureSelectedEvent {
+public class UnitOfMeasureSavedEvent {
+	private boolean success;
 	private UnitOfMeasure unitOfMeasure;
 
 	/**
-	 * Creates a new UnitOfMeasureSelectedEvent with the given UnitOfMeasure
+	 * Creates a new UnitOfMeasureSavedEvent instance for the give UnitOfMeasure
 	 *
-	 * @param unitOfMeasure  the selected UnitOfMeasure instance
+	 * @param unitOfMeasure  the UnitOfMeasure instance that was saved
+	 * @param success  true if the UnitOfMeasure was successfully saved, otherwise false
 	 */
-	public UnitOfMeasureSelectedEvent(UnitOfMeasure unitOfMeasure) {
+	public UnitOfMeasureSavedEvent(UnitOfMeasure unitOfMeasure, boolean success) {
 		this.unitOfMeasure = unitOfMeasure;
+		this.success = success;
 	}
 
-	// Getter
+	// Getters
+	public boolean isSuccess() {
+		return success;
+	}
 	public UnitOfMeasure getUnitOfMeasure() {
 		return unitOfMeasure;
 	}

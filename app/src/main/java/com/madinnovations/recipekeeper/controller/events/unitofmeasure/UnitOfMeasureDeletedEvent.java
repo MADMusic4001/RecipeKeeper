@@ -13,36 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.madinnovations.recipekeeper.controller.events;
+package com.madinnovations.recipekeeper.controller.events.unitofmeasure;
 
 import com.madinnovations.recipekeeper.model.entities.UnitOfMeasure;
 
 /**
- * ${CLASS_DESCRIPTION}
- *
- * @author Mark
- * Created 5/9/2016.
+ * Event signifying the result of a request to delete a UnitOfMeasure instance from persistent storage.
  */
-public class UnitOfMeasurePersistenceEvent {
-	public enum Action {
-		SAVE,
-		READ_BY_ID,
-		READ_BY_FILTER,
-		DELETE
-	}
-	private Action action;
+public class UnitOfMeasureDeletedEvent {
+	private boolean successful;
 	private UnitOfMeasure unitOfMeasure;
 
-	public UnitOfMeasurePersistenceEvent(
-			Action action, UnitOfMeasure unitOfMeasure) {
-		this.action = action;
+	/**
+	 * Creates a UnitOfMeasureDeletedEvent instance with the given status and the filter for the instances that were to be
+	 * deleted.
+	 *
+	 * @param successful  true if the delete was successful, otherwise false
+	 * @param unitOfMeasure  the filter for the instances to be deleted
+	 */
+	public UnitOfMeasureDeletedEvent(boolean successful, UnitOfMeasure unitOfMeasure) {
+		this.successful = successful;
 		this.unitOfMeasure = unitOfMeasure;
 	}
 
-	public Action getAction() {
-		return action;
+	// Getters
+	public boolean isSuccessful() {
+		return successful;
 	}
-
 	public UnitOfMeasure getUnitOfMeasure() {
 		return unitOfMeasure;
 	}

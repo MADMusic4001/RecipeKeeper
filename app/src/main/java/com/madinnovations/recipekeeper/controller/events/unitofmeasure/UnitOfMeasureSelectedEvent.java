@@ -13,27 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.madinnovations.recipekeeper.controller.events;
+package com.madinnovations.recipekeeper.controller.events.unitofmeasure;
 
-import com.madinnovations.recipekeeper.model.entities.Recipe;
+import com.madinnovations.recipekeeper.model.entities.UnitOfMeasure;
 
 /**
- * Event requesting that Recipes be loaded from persistent storage.
+ * Event indicating a {@link UnitOfMeasure} was selected from the list of recipes.
  */
-public class LoadRecipesEvent {
-	private Recipe filter;
+public class UnitOfMeasureSelectedEvent {
+	private UnitOfMeasure unitOfMeasure;
 
 	/**
-	 * Creates a new LoadRecipesEvent with the given Recipe to be used to filter results.
+	 * Creates a new UnitOfMeasureSelectedEvent with the given UnitOfMeasure
 	 *
-	 * @param filter  a Recipe instance to use as a filter
+	 * @param unitOfMeasure  the selected UnitOfMeasure instance
 	 */
-	public LoadRecipesEvent(Recipe filter) {
-		this.filter = filter;
+	public UnitOfMeasureSelectedEvent(UnitOfMeasure unitOfMeasure) {
+		this.unitOfMeasure = unitOfMeasure;
 	}
 
-	// Getters
-	public Recipe getFilter() {
-		return filter;
+	// Getter
+	public UnitOfMeasure getUnitOfMeasure() {
+		return unitOfMeasure;
 	}
 }

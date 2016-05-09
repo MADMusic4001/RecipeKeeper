@@ -26,9 +26,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.madinnovations.recipekeeper.R;
-import com.madinnovations.recipekeeper.controller.events.UnitOfMeasurePersistenceEvent;
-import com.madinnovations.recipekeeper.controller.events.UnitOfMeasureSavedEvent;
-import com.madinnovations.recipekeeper.controller.events.UnitOfMeasureSelectedEvent;
+import com.madinnovations.recipekeeper.controller.events.unitofmeasure.UnitOfMeasurePersistenceEvent;
+import com.madinnovations.recipekeeper.controller.events.unitofmeasure.UnitOfMeasureSavedEvent;
+import com.madinnovations.recipekeeper.controller.events.unitofmeasure.UnitOfMeasureSelectedEvent;
 import com.madinnovations.recipekeeper.model.entities.UnitOfMeasure;
 import com.madinnovations.recipekeeper.model.utils.StringUtils;
 import com.madinnovations.recipekeeper.view.di.modules.FragmentModule;
@@ -80,8 +80,8 @@ public class UnitOfMeasureDetailFragment extends Fragment{
 		eventBus.register(this);
 		View layout = inflater.inflate(R.layout.unit_of_measure_detail_fragment, container, false);
 		singularNameEdit = (EditText)layout.findViewById(R.id.uom_singular_name_edit);
-		pluralNameEdit = (EditText)layout.findViewById(R.id.uom_label_plural_name_edit);
-		notesEdit = (EditText)layout.findViewById(R.id.uom_label_notes_edit);
+		pluralNameEdit = (EditText)layout.findViewById(R.id.uom_plural_name_edit);
+		notesEdit = (EditText)layout.findViewById(R.id.uom_notes_edit);
 		saveButton = (Button)layout.findViewById(R.id.uom_save_button);
 		if(unitOfMeasure == null) {
 			unitOfMeasure = new UnitOfMeasure();

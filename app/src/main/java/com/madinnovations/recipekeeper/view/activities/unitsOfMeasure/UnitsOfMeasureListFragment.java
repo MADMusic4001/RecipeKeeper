@@ -16,7 +16,6 @@
 package com.madinnovations.recipekeeper.view.activities.unitsOfMeasure;
 
 import android.app.Fragment;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -28,11 +27,11 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.madinnovations.recipekeeper.R;
-import com.madinnovations.recipekeeper.controller.events.UnitOfMeasureDeletedEvent;
-import com.madinnovations.recipekeeper.controller.events.UnitOfMeasurePersistenceEvent;
-import com.madinnovations.recipekeeper.controller.events.UnitOfMeasureSavedEvent;
-import com.madinnovations.recipekeeper.controller.events.UnitOfMeasureSelectedEvent;
-import com.madinnovations.recipekeeper.controller.events.UnitsOfMeasureLoadedEvent;
+import com.madinnovations.recipekeeper.controller.events.unitofmeasure.UnitOfMeasureDeletedEvent;
+import com.madinnovations.recipekeeper.controller.events.unitofmeasure.UnitOfMeasurePersistenceEvent;
+import com.madinnovations.recipekeeper.controller.events.unitofmeasure.UnitOfMeasureSavedEvent;
+import com.madinnovations.recipekeeper.controller.events.unitofmeasure.UnitOfMeasureSelectedEvent;
+import com.madinnovations.recipekeeper.controller.events.unitofmeasure.UnitsOfMeasureLoadedEvent;
 import com.madinnovations.recipekeeper.model.entities.UnitOfMeasure;
 import com.madinnovations.recipekeeper.view.adapters.UnitOfMeasureListAdapter;
 import com.madinnovations.recipekeeper.view.di.modules.FragmentModule;

@@ -22,7 +22,7 @@ import android.util.Log;
 
 import com.madinnovations.recipekeeper.R;
 import com.madinnovations.recipekeeper.controller.eventhandlers.RecipeEventHandler;
-import com.madinnovations.recipekeeper.controller.events.RecipeSelectedEvent;
+import com.madinnovations.recipekeeper.controller.events.recipe.RecipeSelectedEvent;
 import com.madinnovations.recipekeeper.model.utils.IntentConstants;
 import com.madinnovations.recipekeeper.view.RecipeKeeperApp;
 import com.madinnovations.recipekeeper.view.activities.recipeDetail.RecipeDetailActivity;
@@ -79,6 +79,11 @@ public class RecipesListActivity extends Activity {
 		Log.e("RecipeListActivity", "detailFragment = " + detailFragment);
 	}
 
+	/**
+	 * Handles a RecipeSelectedEvent by switching to the recipe details fragment.
+	 *
+	 * @param event  a RecipeSelectedEvent instance
+     */
 	@Subscribe(threadMode = ThreadMode.MAIN)
 	public void onRecipeSelected(RecipeSelectedEvent event) {
 		Log.e("RecipeListActivity", "detailFragment = " + detailFragment);

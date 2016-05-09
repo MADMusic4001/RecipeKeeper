@@ -15,10 +15,9 @@
  */
 package com.madinnovations.recipekeeper.controller.eventhandlers;
 
-import com.madinnovations.recipekeeper.controller.events.LoadRecipesEvent;
-import com.madinnovations.recipekeeper.controller.events.RecipeSavedEvent;
-import com.madinnovations.recipekeeper.controller.events.RecipesLoadedEvent;
-import com.madinnovations.recipekeeper.controller.events.SaveRecipeEvent;
+import com.madinnovations.recipekeeper.controller.events.recipe.RecipePersistenceEvent;
+import com.madinnovations.recipekeeper.controller.events.recipe.RecipeSavedEvent;
+import com.madinnovations.recipekeeper.controller.events.recipe.RecipesLoadedEvent;
 import com.madinnovations.recipekeeper.model.dao.RecipeDao;
 import com.madinnovations.recipekeeper.model.entities.Recipe;
 
@@ -49,25 +48,16 @@ public class RecipeEventHandler {
 		this.recipeDao = recipeDao;
 	}
 
-	/**
-	 * Processes a request to save a Recipe to persistent storage.
-	 *
-	 * @param event  a SaveRecipeEvent containing the Recipe instance to save
-	 */
 	@Subscribe(threadMode = ThreadMode.ASYNC)
-	public void onSaveRecipeEvent(SaveRecipeEvent event) {
-		boolean result = recipeDao.save(event.getRecipe());
-		eventBus.post(new RecipeSavedEvent(event.getRecipe(), result));
-	}
-
-	/**
-	 * Processes a request to load Recipe instances from persistent storage.
-	 *
-	 * @param event  a LoadRecipesEvent instance containing a Recipe instance to use as a filter.
-	 */
-	@Subscribe(threadMode = ThreadMode.ASYNC)
-	public void onLoadRecipesEvent(LoadRecipesEvent event) {
-		Set<Recipe> results = recipeDao.read(event.getFilter());
-		eventBus.post(new RecipesLoadedEvent(results, results != null));
+	public void onRecipePersistenceEvent(RecipePersistenceEvent event) {
+		switch (event.getAction()) {
+			case SAVE:
+				boolean result = recipeDao.save(event.getRecipe());
+				eventBus.post(new RecipeSavedEvent(event.getRecipe(), result));
+				break;
+			case READ_BY_FILTER:
+				Set<Recipe> results = recipeDao.read(event.getRecipe());
+				eventBus.post(new RecipesLoadedEvent(results, results != null));
+		}
 	}
 }

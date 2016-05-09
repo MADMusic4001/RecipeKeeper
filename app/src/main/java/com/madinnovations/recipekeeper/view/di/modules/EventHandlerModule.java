@@ -15,8 +15,10 @@
  */
 package com.madinnovations.recipekeeper.view.di.modules;
 
+import com.madinnovations.recipekeeper.controller.eventhandlers.CategoryEventHandler;
 import com.madinnovations.recipekeeper.controller.eventhandlers.RecipeEventHandler;
 import com.madinnovations.recipekeeper.controller.eventhandlers.UnitOfMeasureEventHandler;
+import com.madinnovations.recipekeeper.model.dao.CategoryDao;
 import com.madinnovations.recipekeeper.model.dao.RecipeDao;
 import com.madinnovations.recipekeeper.model.dao.UnitOfMeasureDao;
 
@@ -45,6 +47,13 @@ public class EventHandlerModule {
 	@Provides @Singleton
 	UnitOfMeasureEventHandler provideUnitOfMeasureEventHandler(EventBus eventBus, UnitOfMeasureDao unitOfMeasureDao) {
 		UnitOfMeasureEventHandler handler = new UnitOfMeasureEventHandler(eventBus, unitOfMeasureDao);
+		eventBus.register(handler);
+		return handler;
+	}
+
+	@Provides @Singleton
+	CategoryEventHandler provideCategoryEventHandler(EventBus eventBus, CategoryDao categoryDao) {
+		CategoryEventHandler handler = new CategoryEventHandler(eventBus, categoryDao);
 		eventBus.register(handler);
 		return handler;
 	}

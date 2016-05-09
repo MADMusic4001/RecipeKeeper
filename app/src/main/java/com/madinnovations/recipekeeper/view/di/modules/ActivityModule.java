@@ -15,6 +15,7 @@
  */
 package com.madinnovations.recipekeeper.view.di.modules;
 
+import com.madinnovations.recipekeeper.view.activities.category.CategoriesActivity;
 import com.madinnovations.recipekeeper.view.activities.recipeDetail.RecipeDetailActivity;
 import com.madinnovations.recipekeeper.view.activities.recipesList.RecipesListActivity;
 import com.madinnovations.recipekeeper.view.activities.unitsOfMeasure.UnitsOfMeasureActivity;
@@ -25,8 +26,6 @@ import dagger.Provides;
 
 /**
  * Dagger module to provide Activity instances
- *
- * Created 4/23/2016.
  */
 @PerActivity
 @Module
@@ -34,6 +33,7 @@ public class ActivityModule {
 	RecipesListActivity  recipesListActivity;
 	RecipeDetailActivity recipeDetailActivity;
 	UnitsOfMeasureActivity unitsOfMeasureActivity;
+	CategoriesActivity categoriesActivity;
 
 	public ActivityModule(RecipesListActivity recipesListActivity) {
 		this.recipesListActivity = recipesListActivity;
@@ -43,6 +43,9 @@ public class ActivityModule {
 	}
 	public ActivityModule(UnitsOfMeasureActivity unitsOfMeasureActivity) {
 		this.unitsOfMeasureActivity = unitsOfMeasureActivity;
+	}
+	public ActivityModule(CategoriesActivity categoriesActivity) {
+		this.categoriesActivity = categoriesActivity;
 	}
 
 	@Provides @PerActivity
@@ -56,5 +59,9 @@ public class ActivityModule {
 	@Provides @PerActivity
 	UnitsOfMeasureActivity unitsOfMeasureActivity() {
 		return this.unitsOfMeasureActivity;
+	}
+	@Provides @PerActivity
+	CategoriesActivity categoriesActivity() {
+		return this.categoriesActivity;
 	}
 }

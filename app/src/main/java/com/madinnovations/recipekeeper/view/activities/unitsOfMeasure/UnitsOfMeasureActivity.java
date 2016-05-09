@@ -24,9 +24,10 @@ import android.view.MenuItem;
 
 import com.madinnovations.recipekeeper.R;
 import com.madinnovations.recipekeeper.controller.eventhandlers.UnitOfMeasureEventHandler;
-import com.madinnovations.recipekeeper.controller.events.UnitOfMeasureSelectedEvent;
+import com.madinnovations.recipekeeper.controller.events.unitofmeasure.UnitOfMeasureSelectedEvent;
 import com.madinnovations.recipekeeper.model.entities.UnitOfMeasure;
 import com.madinnovations.recipekeeper.view.RecipeKeeperApp;
+import com.madinnovations.recipekeeper.view.activities.category.CategoriesActivity;
 import com.madinnovations.recipekeeper.view.activities.recipesList.RecipesListActivity;
 import com.madinnovations.recipekeeper.view.di.components.ActivityComponent;
 import com.madinnovations.recipekeeper.view.di.modules.ActivityModule;
@@ -105,6 +106,10 @@ public class UnitsOfMeasureActivity extends Activity {
 		}
 		if(id == R.id.actionManageRecipes){
 			Intent intent = new Intent(getApplicationContext(), RecipesListActivity.class);
+			startActivity(intent);
+		}
+		if(id == R.id.actionManageCategories){
+			Intent intent = new Intent(getApplicationContext(), CategoriesActivity.class);
 			startActivity(intent);
 		}
 		return result || super.onOptionsItemSelected(item);

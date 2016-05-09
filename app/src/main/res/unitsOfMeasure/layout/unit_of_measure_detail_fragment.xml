@@ -21,12 +21,12 @@
       <EditText
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:id="@+id/uom_label_plural_name_edit"
+          android:id="@+id/uom_plural_name_edit"
           android:hint="@string/label_plural_name"/>
       <EditText
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:id="@+id/uom_label_notes_edit"
+          android:id="@+id/uom_notes_edit"
           android:hint="@string/label_notes"/>
       <Button
           android:layout_width="match_parent"

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.madinnovations.recipekeeper.controller.events;
+package com.madinnovations.recipekeeper.controller.events.recipe;
 
 import com.madinnovations.recipekeeper.model.entities.Recipe;
 

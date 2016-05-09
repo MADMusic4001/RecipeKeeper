@@ -17,9 +17,7 @@ package com.madinnovations.recipekeeper.view.activities.recipesList;
 
 import android.app.Fragment;
 import android.content.Intent;
-import android.database.DataSetObserver;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,18 +27,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.madinnovations.recipekeeper.R;
-import com.madinnovations.recipekeeper.controller.events.LoadRecipesEvent;
-import com.madinnovations.recipekeeper.controller.events.RecipeSavedEvent;
-import com.madinnovations.recipekeeper.controller.events.RecipeSelectedEvent;
-import com.madinnovations.recipekeeper.controller.events.RecipesLoadedEvent;
+import com.madinnovations.recipekeeper.controller.events.recipe.RecipePersistenceEvent;
+import com.madinnovations.recipekeeper.controller.events.recipe.RecipeSavedEvent;
+import com.madinnovations.recipekeeper.controller.events.recipe.RecipeSelectedEvent;
+import com.madinnovations.recipekeeper.controller.events.recipe.RecipesLoadedEvent;
 import com.madinnovations.recipekeeper.model.entities.Recipe;
-import com.madinnovations.recipekeeper.model.utils.IntentConstants;
-import com.madinnovations.recipekeeper.view.activities.recipeDetail.RecipeDetailActivity;
+import com.madinnovations.recipekeeper.view.activities.category.CategoriesActivity;
 import com.madinnovations.recipekeeper.view.activities.unitsOfMeasure.UnitsOfMeasureActivity;
 import com.madinnovations.recipekeeper.view.adapters.RecipeListAdapter;
 import com.madinnovations.recipekeeper.view.di.modules.FragmentModule;
@@ -48,8 +44,6 @@ import com.madinnovations.recipekeeper.view.di.modules.FragmentModule;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -97,7 +91,7 @@ public class RecipesListFragment extends Fragment {
 		View layout = inflater.inflate(R.layout.recipe_list_fragment, container, false);
 		listView = (ListView)layout.findViewById(R.id.rlf_list_view);
 		initListView();
-		eventBus.post(new LoadRecipesEvent(null));
+		eventBus.post(new RecipePersistenceEvent(RecipePersistenceEvent.Action.READ_BY_FILTER, null));
 		return layout;
 	}
 
@@ -122,6 +116,10 @@ public class RecipesListFragment extends Fragment {
 			eventBus.post(new RecipeSelectedEvent(new Recipe(getString(R.string.default_recipe_name))));
 			result = true;
 		}
+		if(id == R.id.actionManageCategories){
+			Intent intent = new Intent(getActivity().getApplicationContext(), CategoriesActivity.class);
+			startActivity(intent);
+		}
 		if(id == R.id.actionManageUnitsOfMeasure){
 			Intent intent = new Intent(getActivity().getApplicationContext(), UnitsOfMeasureActivity.class);
 			startActivity(intent);
@@ -129,32 +127,35 @@ public class RecipesListFragment extends Fragment {
 		return result || super.onOptionsItemSelected(item);
 	}
 
+	/**
+	 * Handles a RecipesLoadedEvent by displaying a success/failure message to the user with a toast and copying the collection of Recipe
+	 * instances to the UI list view if the load was successful.
+	 *
+	 * @param event  a RecipesLoadedEvent instance
+     */
 	@Subscribe(threadMode = ThreadMode.MAIN)
 	public void onRecipesLoadedEvent(RecipesLoadedEvent event) {
 		String toastString;
 		adapter.clear();
 		if(event.isSuccess()) {
 			toastString = getString(R.string.toast_recipes_loaded);
-			Log.d("RecipesListFragment", event.getRecipes().size() + " recipes loaded.");
 			adapter.addAll(event.getRecipes());
 		} else {
 			toastString = getString(R.string.toast_recipes_loaded_error);
 		}
-		Log.e("RecipesListFragment", "Adapter = " + listView.getAdapter());
-		Log.e("RecipesListFragment", "Wrapped adapter = " + ((HeaderViewListAdapter)listView.getAdapter()).getWrappedAdapter());
-		Log.e("RecipesListFragment", "Adapter getCount = " + listView.getAdapter().getCount());
-		Log.e("RecipesListFragment", "Adapter getCount = " + adapter.getCount());
-		Log.e("RecipesListFragment", "Listview visible = " + listView.getVisibility());
 		adapter.notifyDataSetChanged();
 		Toast.makeText(getActivity(), toastString, Toast.LENGTH_SHORT).show();
 	}
 
+	/**
+	 * Handles a RecipesSavedEvent by adding the Recipe to the UI list view if the save was successful.
+	 *
+	 * @param event  a RecipesSavedEvent instance
+     */
 	@Subscribe(threadMode = ThreadMode.MAIN)
 	public void onRecipeSavedEvent(RecipeSavedEvent event) {
 		if(event.isSuccess()) {
 			adapter.add(event.getRecipe());
-			Log.e("RecipesListFragment", "Adapter getCount = " + listView.getAdapter().getCount());
-			Log.e("RecipesListFragment", "Adapter getCount = " + adapter.getCount());
 			adapter.notifyDataSetChanged();
 		}
 	}

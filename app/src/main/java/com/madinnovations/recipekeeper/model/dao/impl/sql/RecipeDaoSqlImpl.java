@@ -280,42 +280,41 @@ public class RecipeDaoSqlImpl implements BaseDaoSql, RecipeDao {
 		String whereClause = "";
 		if(filter != null) {
 			if(filter.getId() != DataConstants.UNINITIALIZED) {
-				whereClause = addFilter(whereClause, RecipeContract._ID, Long.valueOf(filter.getId()).toString(), isFirst, args);
-				isFirst = false;
-			}
-			if(filter.getName() != null && !filter.getName().isEmpty()) {
-				whereClause = addFilter(whereClause, RecipeContract.NAME_COLUMN_NAME, filter.getName(), isFirst, args);
-				isFirst = false;
-			}
-			if(filter.getDescription() != null && !filter.getDescription().isEmpty()) {
-				whereClause = addFilter(whereClause, RecipeContract.DESCRIPTION_COLUMN_NAME, filter.getDescription(), isFirst,
-										args);
-				isFirst = false;
-			}
-			if(filter.getDirections() != null && !filter.getDirections().isEmpty()) {
-				whereClause = addFilter(whereClause, RecipeContract.DIRECTIONS_COLUMN_NAME, filter.getDirections(), isFirst,
-										args);
-				isFirst = false;
-			}
-			if(filter.getNotes() != null && !filter.getNotes().isEmpty()) {
-				whereClause = addFilter(whereClause, RecipeContract.NOTES_COLUMN_NAME, filter.getNotes(), isFirst,
-										args);
-				isFirst = false;
-			}
-			if(filter.getSource() != null && !filter.getSource().isEmpty()) {
-				whereClause = addFilter(whereClause, RecipeContract.SOURCE_COLUMN_NAME, filter.getSource(), isFirst,
-										args);
-				isFirst = false;
-			}
-			if(filter.getCreated() != null) {
-				whereClause = addFilter(whereClause, RecipeContract.CREATED_COLUMN_NAME,
-										Long.valueOf(filter.getCreated().getTimeInMillis()).toString(), isFirst, args);
-				isFirst = false;
-			}
-			if(filter.getUpdated() != null) {
-				whereClause = addFilter(whereClause, RecipeContract.UPDATED_COLUMN_NAME,
-										Long.valueOf(filter.getUpdated().getTimeInMillis()).toString(), isFirst, args);
-				isFirst = false;
+				whereClause = addFilter(whereClause, RecipeContract._ID, Long.valueOf(filter.getId()).toString(), true, args);
+			} else {
+				if (filter.getName() != null && !filter.getName().isEmpty()) {
+					whereClause = addFilter(whereClause, RecipeContract.NAME_COLUMN_NAME, filter.getName(), true, args);
+					isFirst = false;
+				}
+				if (filter.getDescription() != null && !filter.getDescription().isEmpty()) {
+					whereClause = addFilter(whereClause, RecipeContract.DESCRIPTION_COLUMN_NAME, filter.getDescription(), isFirst,
+							args);
+					isFirst = false;
+				}
+				if (filter.getDirections() != null && !filter.getDirections().isEmpty()) {
+					whereClause = addFilter(whereClause, RecipeContract.DIRECTIONS_COLUMN_NAME, filter.getDirections(), isFirst,
+							args);
+					isFirst = false;
+				}
+				if (filter.getNotes() != null && !filter.getNotes().isEmpty()) {
+					whereClause = addFilter(whereClause, RecipeContract.NOTES_COLUMN_NAME, filter.getNotes(), isFirst,
+							args);
+					isFirst = false;
+				}
+				if (filter.getSource() != null && !filter.getSource().isEmpty()) {
+					whereClause = addFilter(whereClause, RecipeContract.SOURCE_COLUMN_NAME, filter.getSource(), isFirst,
+							args);
+					isFirst = false;
+				}
+				if (filter.getCreated() != null) {
+					whereClause = addFilter(whereClause, RecipeContract.CREATED_COLUMN_NAME,
+							Long.valueOf(filter.getCreated().getTimeInMillis()).toString(), isFirst, args);
+					isFirst = false;
+				}
+				if (filter.getUpdated() != null) {
+					whereClause = addFilter(whereClause, RecipeContract.UPDATED_COLUMN_NAME,
+							Long.valueOf(filter.getUpdated().getTimeInMillis()).toString(), isFirst, args);
+				}
 			}
 		}
 		return whereClause;

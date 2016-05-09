@@ -16,7 +16,6 @@
 package com.madinnovations.recipekeeper.view.activities.recipeDetail;
 
 import android.app.Fragment;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -30,9 +29,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.madinnovations.recipekeeper.R;
-import com.madinnovations.recipekeeper.controller.events.RecipeSavedEvent;
-import com.madinnovations.recipekeeper.controller.events.RecipeSelectedEvent;
-import com.madinnovations.recipekeeper.controller.events.SaveRecipeEvent;
+import com.madinnovations.recipekeeper.controller.events.recipe.RecipePersistenceEvent;
+import com.madinnovations.recipekeeper.controller.events.recipe.RecipeSavedEvent;
+import com.madinnovations.recipekeeper.controller.events.recipe.RecipeSelectedEvent;
 import com.madinnovations.recipekeeper.model.entities.Recipe;
 import com.madinnovations.recipekeeper.model.utils.DateUtils;
 import com.madinnovations.recipekeeper.model.utils.StringUtils;
@@ -123,16 +122,35 @@ public class RecipeDetailFragment extends Fragment {
 		return layout;
 	}
 
+	/**
+	 * Handles a RecipeSelectedEvent by copying the Recipe data to the UI.
+	 *
+	 * @param event  a RecipeSelectedEvent instance
+     */
 	@Subscribe(threadMode = ThreadMode.MAIN)
-	public void OnRecipeSavedEvent(RecipeSavedEvent event) {
+	public void onRecipeSelectedEvent(RecipeSelectedEvent event) {
+		this.recipe = event.getRecipe();
+		copyRecipeToView();
+	}
+
+	/**
+	 * Handles a RecipeSavedEvent by displaying a success/failure message to the user with a toast and copy the saved recipe to the UI
+	 * fields if the save was successful.
+	 *
+	 * @param event  a RecipeSavedEvent
+     */
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void onRecipeSavedEvent(RecipeSavedEvent event) {
 		String toastString;
+
 		if(event.isSuccess()) {
+			this.recipe = event.getRecipe();
+			copyRecipeToView();
 			toastString = getString(R.string.toast_recipe_saved);
+		} else {
+			toastString = getString((R.string.toast_recipe_saved_error));
 		}
-		else {
-			toastString = getString(R.string.toast_recipe_saved_error);
-		}
-		Toast.makeText(getActivity(), toastString, Toast.LENGTH_SHORT).show();
+		Toast.makeText(getActivity(), toastString, Toast.LENGTH_LONG).show();
 	}
 
 	private void initSaveButton() {
@@ -158,7 +176,7 @@ public class RecipeDetailFragment extends Fragment {
 				}
 
 				String value = nameEdit.getText().toString();
-				if(value == null || value.isEmpty()) {
+				if(value.isEmpty()) {
 					nameEdit.setError(getString(R.string.error_required));
 					errors = true;
 				} else if(!value.equals(recipe.getName())) {
@@ -189,7 +207,7 @@ public class RecipeDetailFragment extends Fragment {
 				// TODO: Ingredients
 
 				if(changed && !errors) {
-					eventBus.post(new SaveRecipeEvent(newRecipe));
+					eventBus.post(new RecipePersistenceEvent(RecipePersistenceEvent.Action.SAVE, newRecipe));
 				}
 			}
 		});
@@ -242,29 +260,6 @@ public class RecipeDetailFragment extends Fragment {
 //			}
 //		});
 		registerForContextMenu(categoriesList);
-	}
-
-	@Subscribe(threadMode = ThreadMode.MAIN)
-	public void onRecipeSelectedEvent(RecipeSelectedEvent event) {
-		Log.i("RecipeDetailFragment", "Existing recipe ID = " + recipe.getId());
-		Log.i("RecipeDetailFragment", "New recipe ID = " + event.getRecipe().getId());
-		this.recipe = event.getRecipe();
-		copyRecipeToView();
-	}
-
-	@Subscribe(threadMode = ThreadMode.MAIN)
-	public void onRecipeSavedEvent(RecipeSavedEvent event) {
-		String toastString;
-
-		if(event.isSuccess()) {
-			Log.e("RecipeDetailFragment", "Saved recipe ID = " + event.getRecipe().getId());
-			this.recipe = event.getRecipe();
-			copyRecipeToView();
-			toastString = getString(R.string.toast_recipe_saved);
-		} else {
-			toastString = getString((R.string.toast_recipe_saved_error));
-		}
-		Toast.makeText(getActivity(), toastString, Toast.LENGTH_LONG).show();
 	}
 
 	private void copyRecipeToView() {

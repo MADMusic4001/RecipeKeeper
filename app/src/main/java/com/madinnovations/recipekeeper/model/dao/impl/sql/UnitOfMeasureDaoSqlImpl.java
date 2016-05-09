@@ -174,22 +174,21 @@ public class UnitOfMeasureDaoSqlImpl implements BaseDaoSql, UnitOfMeasureDao {
 		if(filter != null) {
 			if(filter.getId() != DataConstants.UNINITIALIZED) {
 				whereClause = addFilter(whereClause, UnitOfMeasureContract._ID, Long.valueOf(filter.getId()).toString(),
-										isFirst, args);
-				isFirst = false;
-			}
-			if(filter.getSingularName() != null && !filter.getSingularName().isEmpty()) {
-				whereClause = addFilter(whereClause, UnitOfMeasureContract.SINGULAR_NAME_COLUMN_NAME, filter.getSingularName(),
-										isFirst, args);
-				isFirst = false;
-			}
-			if(filter.getPluralName() != null && !filter.getPluralName().isEmpty()) {
-				whereClause = addFilter(whereClause, UnitOfMeasureContract.PLURAL_NAME_COLUMN_NAME, filter.getPluralName(),
-										isFirst, args);
-				isFirst = false;
-			}
-			if(filter.getNotes() != null && !filter.getNotes().isEmpty()) {
-				whereClause = addFilter(whereClause, UnitOfMeasureContract.NOTES_COLUMN_NAME, filter.getNotes(), isFirst, args);
-				isFirst = false;
+										true, args);
+			} else {
+				if (filter.getSingularName() != null && !filter.getSingularName().isEmpty()) {
+					whereClause = addFilter(whereClause, UnitOfMeasureContract.SINGULAR_NAME_COLUMN_NAME, filter.getSingularName(),
+							true, args);
+					isFirst = false;
+				}
+				if (filter.getPluralName() != null && !filter.getPluralName().isEmpty()) {
+					whereClause = addFilter(whereClause, UnitOfMeasureContract.PLURAL_NAME_COLUMN_NAME, filter.getPluralName(),
+							isFirst, args);
+					isFirst = false;
+				}
+				if (filter.getNotes() != null && !filter.getNotes().isEmpty()) {
+					whereClause = addFilter(whereClause, UnitOfMeasureContract.NOTES_COLUMN_NAME, filter.getNotes(), isFirst, args);
+				}
 			}
 		}
 		return whereClause;

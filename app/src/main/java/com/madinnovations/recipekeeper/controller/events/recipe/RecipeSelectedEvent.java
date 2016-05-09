@@ -1,4 +1,4 @@
-package com.madinnovations.recipekeeper.controller.events;
+package com.madinnovations.recipekeeper.controller.events.recipe;
 
 import com.madinnovations.recipekeeper.model.entities.Recipe;
 

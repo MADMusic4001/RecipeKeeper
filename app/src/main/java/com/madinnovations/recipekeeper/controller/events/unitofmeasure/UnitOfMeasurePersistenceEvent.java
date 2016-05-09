@@ -13,34 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.madinnovations.recipekeeper.controller.events;
+package com.madinnovations.recipekeeper.controller.events.unitofmeasure;
 
 import com.madinnovations.recipekeeper.model.entities.UnitOfMeasure;
 
 /**
- * ${CLASS_DESCRIPTION}
- *
- * @author Mark
- * Created 5/5/2016.
+ * Event representing a request to perform an action in persistent storage for a UnitOfMeasure.
  */
-public class UnitOfMeasureSavedEvent {
-	private boolean success;
+public class UnitOfMeasurePersistenceEvent {
+	public enum Action {
+		SAVE,
+		READ_BY_ID,
+		READ_BY_FILTER,
+		DELETE
+	}
+	private Action action;
 	private UnitOfMeasure unitOfMeasure;
 
 	/**
-	 * Creates a new UnitOfMeasureSavedEvent instance for the give UnitOfMeasure
+	 * Creates a UnitOfMeasurePersistenceEvent instance with the given action and UnitOfMeasure.
 	 *
-	 * @param unitOfMeasure  the UnitOfMeasure instance that was saved
-	 * @param success  true if the UnitOfMeasure was successfully saved, otherwise false
-	 */
-	public UnitOfMeasureSavedEvent(UnitOfMeasure unitOfMeasure, boolean success) {
+	 * @param action  the action to take
+	 * @param unitOfMeasure  a UnitOfMeasure to take action on or use as a filter
+     */
+	public UnitOfMeasurePersistenceEvent(
+			Action action, UnitOfMeasure unitOfMeasure) {
+		this.action = action;
 		this.unitOfMeasure = unitOfMeasure;
-		this.success = success;
 	}
 
 	// Getters
-	public boolean isSuccess() {
-		return success;
+	public Action getAction() {
+		return action;
 	}
 	public UnitOfMeasure getUnitOfMeasure() {
 		return unitOfMeasure;

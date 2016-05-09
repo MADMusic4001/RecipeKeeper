@@ -25,6 +25,7 @@ android {
 			        'src/main/res/recipeList',
 					'src/main/res/recipeDetail',
 					'src/main/res/unitsOfMeasure',
+					'src/main/res/categories',
 					'src/main/res'
 			]
 		}

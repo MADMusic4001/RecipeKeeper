@@ -1,4 +1,4 @@
-package com.madinnovations.recipekeeper.controller.events;
+package com.madinnovations.recipekeeper.controller.events.unitofmeasure;
 
 import com.madinnovations.recipekeeper.model.entities.UnitOfMeasure;
 
