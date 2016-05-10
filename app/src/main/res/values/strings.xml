@@ -13,6 +13,12 @@
   <string name="toast_units_of_measure_loaded_error">Error loading units of measure</string>
   <string name="toast_unit_of_measure_deleted">Unit(s) of Measure successfully deleted</string>
   <string name="toast_unit_of_measure_deleted_error">Error deleting unit(s) of measure</string>
+  <string name="toast_category_saved">Category successfully saved</string>
+  <string name="toast_category_saved_error">Error saving category</string>
+  <string name="toast_categories_loaded">Categories successfully loaded</string>
+  <string name="toast_categories_loaded_error">Error loading categories</string>
+  <string name="toast_category_deleted">Category successfully deleted</string>
+  <string name="toast_category_deleted_error">Error deleting category</string>
 
   <!-- Widget Labels -->
   <string name="label_actionExport">Export all data</string>

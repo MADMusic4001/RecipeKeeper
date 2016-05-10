@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -100,6 +101,13 @@ public class UnitsOfMeasureActivity extends Activity {
 		boolean result = false;
 
 		int id = item.getItemId();
+		if(id == android.R.id.home) {
+			Log.e("UnitsOfMeasureActivity", "home selected");
+			if(!dualPane && detailFragment != null && detailFragment.isVisible()) {
+				getFragmentManager().popBackStack();
+				result = true;
+			}
+		}
 		if(id == R.id.actionNewUnitOfMeasure){
 			eventBus.post(new UnitOfMeasureSelectedEvent(new UnitOfMeasure()));
 			result = true;

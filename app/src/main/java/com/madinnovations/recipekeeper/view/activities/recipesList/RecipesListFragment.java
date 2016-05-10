@@ -83,8 +83,7 @@ public class RecipesListFragment extends Fragment {
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		((RecipesListActivity)getActivity()).getActivityComponent().newFragmentComponent(new FragmentModule(this))
-				.injectInto(this);
+		((RecipesListActivity)getActivity()).getActivityComponent().newFragmentComponent(new FragmentModule(this)).injectInto(this);
 		if(!eventBus.isRegistered(this)) {
 			eventBus.register(this);
 		}

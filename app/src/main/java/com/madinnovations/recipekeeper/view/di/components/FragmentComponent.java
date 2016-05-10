@@ -15,6 +15,8 @@
  */
 package com.madinnovations.recipekeeper.view.di.components;
 
+import com.madinnovations.recipekeeper.view.activities.category.CategoriesListFragment;
+import com.madinnovations.recipekeeper.view.activities.category.CategoryDetailFragment;
 import com.madinnovations.recipekeeper.view.activities.recipeDetail.RecipeDetailFragment;
 import com.madinnovations.recipekeeper.view.activities.recipesList.RecipesListFragment;
 import com.madinnovations.recipekeeper.view.activities.unitsOfMeasure.UnitOfMeasureDetailFragment;
@@ -37,4 +39,6 @@ public interface FragmentComponent {
 	void injectInto(RecipeDetailFragment fragment);
 	void injectInto(UnitsOfMeasureListFragment fragment);
 	void injectInto(UnitOfMeasureDetailFragment fragment);
+	void injectInto(CategoriesListFragment fragment);
+	void injectInto(CategoryDetailFragment fragment);
 }

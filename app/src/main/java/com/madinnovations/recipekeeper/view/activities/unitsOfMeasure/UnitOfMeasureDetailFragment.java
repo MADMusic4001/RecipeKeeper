@@ -70,13 +70,7 @@ public class UnitOfMeasureDetailFragment extends Fragment{
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		if(getActivity() instanceof  UnitsOfMeasureActivity) {
-			((UnitsOfMeasureActivity) getActivity()).getActivityComponent().newFragmentComponent(new FragmentModule(this))
-					.injectInto(this);
-		} else {
-			((UnitsOfMeasureActivity) getActivity()).getActivityComponent().newFragmentComponent(new FragmentModule(this))
-					.injectInto(this);
-		}
+		((UnitsOfMeasureActivity) getActivity()).getActivityComponent().newFragmentComponent(new FragmentModule(this)).injectInto(this);
 		eventBus.register(this);
 		View layout = inflater.inflate(R.layout.unit_of_measure_detail_fragment, container, false);
 		singularNameEdit = (EditText)layout.findViewById(R.id.uom_singular_name_edit);

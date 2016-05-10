@@ -15,6 +15,8 @@
  */
 package com.madinnovations.recipekeeper.view.di.modules;
 
+import com.madinnovations.recipekeeper.view.activities.category.CategoriesListFragment;
+import com.madinnovations.recipekeeper.view.activities.category.CategoryDetailFragment;
 import com.madinnovations.recipekeeper.view.activities.recipeDetail.RecipeDetailFragment;
 import com.madinnovations.recipekeeper.view.activities.recipesList.RecipesListFragment;
 import com.madinnovations.recipekeeper.view.activities.unitsOfMeasure.UnitOfMeasureDetailFragment;
@@ -35,6 +37,8 @@ public class FragmentModule {
 	RecipeDetailFragment recipeDetailFragment;
 	UnitOfMeasureDetailFragment unitOfMeasureDetailFragment;
 	UnitsOfMeasureListFragment unitsOfMeasureListFragment;
+	CategoriesListFragment categoriesListFragment;
+	CategoryDetailFragment categoryDetailFragment;
 
 	public FragmentModule(RecipesListFragment recipesListFragment) {
 		this.recipesListFragment = recipesListFragment;
@@ -47,6 +51,12 @@ public class FragmentModule {
 	}
 	public FragmentModule(UnitsOfMeasureListFragment unitsOfMeasureListFragment) {
 		this.unitsOfMeasureListFragment = unitsOfMeasureListFragment;
+	}
+	public FragmentModule(CategoriesListFragment categoriesListFragment) {
+		this.categoriesListFragment = categoriesListFragment;
+	}
+	public FragmentModule(CategoryDetailFragment categoryDetailFragment) {
+		this.categoryDetailFragment = categoryDetailFragment;
 	}
 
 	@Provides @PerFragment
@@ -64,4 +74,10 @@ public class FragmentModule {
 
 	@Provides @PerFragment
 	UnitOfMeasureDetailFragment unitOfMeasureDetailFragment() { return this.unitOfMeasureDetailFragment;}
+
+	@Provides @PerFragment
+	CategoriesListFragment categoriesListFragment() { return this.categoriesListFragment;}
+
+	@Provides @PerFragment
+	CategoryDetailFragment categoryDetailFragment() { return this.categoryDetailFragment;}
 }
