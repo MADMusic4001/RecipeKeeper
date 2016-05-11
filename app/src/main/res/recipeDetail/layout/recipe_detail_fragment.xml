@@ -1,62 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:id="@+id/recipe_scroll_view">
+            android:id="@+id/recipe_scroll_view"
+            android:layout_width="match_parent"
+             android:layout_height="wrap_content">
 
   <LinearLayout
+      android:id="@+id/recipe_detail_scroll_layout"
       android:orientation="vertical"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/recipe_detail_scroll_layout">
+      android:layout_height="wrap_content">
     <EditText
+        android:id="@+id/recipe_name_edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/recipe_name_edit"
         android:hint="@string/label_name"/>
     <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/recipe_description_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:hint="@string/label_description"/>
-
     <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/recipe_directions_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:hint="@string/label_directions"/>
-
-    <ListView
+    <LinearLayout
+        android:id="@+id/recipe_categories_list"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/recipe_categories_list"/>
-    <ListView
+        android:layout_height="wrap_content"/>
+    <LinearLayout
+        android:id="@+id/recipe_ingredients_list"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/recipe_ingredients_list"/>
-
+        android:layout_height="wrap_content"/>
     <EditText
+        android:id="@+id/recipe_notes_edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/recipe_notes_edit"
         android:hint="@string/label_notes"/>
     <EditText
+        android:id="@+id/recipe_source_edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/recipe_source_edit"
         android:hint="@string/label_source"/>
     <TextView
+        android:id="@+id/recipe_created_text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/recipe_created_text"/>
+        android:layout_height="wrap_content"/>
     <TextView
+        android:id="@+id/recipe_updated_text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/recipe_updated_text"/>
+        android:layout_height="wrap_content"/>
     <Button
+        android:id="@+id/recipe_save_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/recipe_save_button"
         android:text="@string/label_save"/>
   </LinearLayout>
 </ScrollView>

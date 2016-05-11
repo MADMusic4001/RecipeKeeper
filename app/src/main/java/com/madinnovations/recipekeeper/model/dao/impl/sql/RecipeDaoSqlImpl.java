@@ -212,8 +212,11 @@ public class RecipeDaoSqlImpl implements BaseDaoSql, RecipeDao {
 
 		sqlHelper.getWritableDatabase().beginTransactionNonExclusive();
 		try {
-			result = (sqlHelper.getWritableDatabase().delete(RecipeContract.TABLE_NAME, whereClause, whereArgsList.toArray(whereArgs)) >= 0);
-			sqlHelper.getWritableDatabase().setTransactionSuccessful();
+			result = (sqlHelper.getWritableDatabase().delete(RecipeContract.TABLE_NAME, whereClause,
+															 whereArgsList.toArray(whereArgs)) >= 0);
+			if(result) {
+				sqlHelper.getWritableDatabase().setTransactionSuccessful();
+			}
 		}
 		finally {
 			sqlHelper.getWritableDatabase().endTransaction();
@@ -234,14 +237,16 @@ public class RecipeDaoSqlImpl implements BaseDaoSql, RecipeDao {
 		try {
 			Cursor cursor = sqlHelper.getWritableDatabase().query(RecipeContract.TABLE_NAME, RECIPE_COLUMNS, whereClause,
 																  whereArgsList.toArray(whereArgs), null, null, null, null);
-			cursor.moveToFirst();
-			while(!cursor.isAfterLast()) {
-				Recipe aRecipe = createRecipeInstance(cursor);
-				result.add(aRecipe);
-				cursor.moveToNext();
+			if(cursor != null && !cursor.isClosed()) {
+				cursor.moveToFirst();
+				while (!cursor.isAfterLast()) {
+					Recipe aRecipe = createRecipeInstance(cursor);
+					result.add(aRecipe);
+					cursor.moveToNext();
+				}
+				cursor.close();
+				sqlHelper.getWritableDatabase().setTransactionSuccessful();
 			}
-			cursor.close();
-			sqlHelper.getWritableDatabase().setTransactionSuccessful();
 		}
 		finally {
 			sqlHelper.getWritableDatabase().endTransaction();
@@ -262,11 +267,13 @@ public class RecipeDaoSqlImpl implements BaseDaoSql, RecipeDao {
 		try {
 			Cursor cursor = sqlHelper.getWritableDatabase().query(true, RecipeContract.TABLE_NAME, RECIPE_COLUMNS, whereClause,
 					whereArgs, null, null, null, null);
-			if(cursor.moveToFirst()) {
-				result = createRecipeInstance(cursor);
+			if(cursor != null && !cursor.isClosed()) {
+				if (cursor.moveToFirst()) {
+					result = createRecipeInstance(cursor);
+				}
+				cursor.close();
+				sqlHelper.getWritableDatabase().setTransactionSuccessful();
 			}
-			cursor.close();
-			sqlHelper.getWritableDatabase().setTransactionSuccessful();
 		}
 		finally {
 			sqlHelper.getWritableDatabase().endTransaction();

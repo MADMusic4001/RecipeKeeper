@@ -15,18 +15,10 @@
  */
 package com.madinnovations.recipekeeper.model.entities;
 
-import com.activeandroid.Model;
-import com.activeandroid.annotation.Column;
-import com.activeandroid.annotation.Table;
 import com.madinnovations.recipekeeper.model.utils.DataConstants;
 
-import java.util.List;
-
 /**
- * ${CLASS_DESCRIPTION}
- *
- * @author Mark
- * Created 4/17/2016.
+ * Entity representing a category of Recipes.
  */
 public class Category {
 	private long id = DataConstants.UNINITIALIZED;
@@ -38,6 +30,10 @@ public class Category {
 	 */
 	public Category() {
 		super();
+	}
+
+	public Category(String name) {
+		this.name = name;
 	}
 
 	@Override

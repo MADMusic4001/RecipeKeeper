@@ -74,16 +74,24 @@ public class CategoryDaoSqlImpl implements BaseDaoSql, CategoryDao {
 		values.put(CategoryContract.DESCRIPTION_COLUMN_NAME, category.getDescription());
 
 		sqlHelper.getWritableDatabase().beginTransaction();
-		if(category.getId() == DataConstants.UNINITIALIZED) {
-			category.setId(sqlHelper.getWritableDatabase().insert(CategoryContract.TABLE_NAME, null, values));
-			result = (category.getId() != DataConstants.UNINITIALIZED);
+		try {
+			if (category.getId() == DataConstants.UNINITIALIZED) {
+				category.setId(sqlHelper.getWritableDatabase().insert(CategoryContract.TABLE_NAME, null, values));
+				result = (category.getId() != DataConstants.UNINITIALIZED);
+			}
+			else {
+				values.put("_id", category.getId());
+				int count = sqlHelper.getWritableDatabase().update(CategoryContract.TABLE_NAME, values,
+																   WHERE + SPACE + CategoryContract._ID + EQUALS + PLACEHOLDER,
+																   new String[]{Long.valueOf(category.getId()).toString()});
+				result = (count == 1);
+			}
+			if(result) {
+				sqlHelper.getWritableDatabase().setTransactionSuccessful();
+			}
 		}
-		else {
-			values.put("_id", category.getId());
-			int count = sqlHelper.getWritableDatabase().update(CategoryContract.TABLE_NAME, values,
-							WHERE + SPACE + CategoryContract._ID + EQUALS + PLACEHOLDER,
-							new String[]{Long.valueOf(category.getId()).toString()});
-			result = (count == 1);
+		finally {
+			sqlHelper.getWritableDatabase().endTransaction();
 		}
 		return result;
 	}
@@ -150,11 +158,13 @@ public class CategoryDaoSqlImpl implements BaseDaoSql, CategoryDao {
 		try {
 			Cursor cursor = sqlHelper.getWritableDatabase().query(true, CategoryContract.TABLE_NAME, CATEGORY_COLUMNS,
 					whereClause, whereArgs, null, null, null, null);
-			if(cursor.moveToFirst()) {
-				result = createCategoryInstance(cursor);
+			if(cursor != null && !cursor.isClosed()) {
+				if (cursor.moveToFirst()) {
+					result = createCategoryInstance(cursor);
+				}
+				cursor.close();
+				sqlHelper.getWritableDatabase().setTransactionSuccessful();
 			}
-			cursor.close();
-			sqlHelper.getWritableDatabase().setTransactionSuccessful();
 		}
 		finally {
 			sqlHelper.getWritableDatabase().endTransaction();

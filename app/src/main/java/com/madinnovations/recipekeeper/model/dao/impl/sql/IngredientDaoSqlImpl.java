@@ -147,14 +147,16 @@ public class IngredientDaoSqlImpl implements BaseDaoSql, IngredientDao {
 		try {
 			Cursor cursor = sqlHelper.getWritableDatabase().query(IngredientContract.TABLE_NAME, INGREDIENT_COLUMNS, whereClause,
 					whereArgsList.toArray(whereArgs), null, null, null, null);
-			cursor.moveToFirst();
-			while(!cursor.isAfterLast()) {
-				Ingredient anIngredient = createIngredientInstance(cursor);
-				result.add(anIngredient);
-				cursor.moveToNext();
+			if(cursor != null && !cursor.isClosed()) {
+				cursor.moveToFirst();
+				while (!cursor.isAfterLast()) {
+					Ingredient anIngredient = createIngredientInstance(cursor);
+					result.add(anIngredient);
+					cursor.moveToNext();
+				}
+				cursor.close();
+				sqlHelper.getWritableDatabase().setTransactionSuccessful();
 			}
-			cursor.close();
-			sqlHelper.getWritableDatabase().setTransactionSuccessful();
 		}
 		finally {
 			sqlHelper.getWritableDatabase().endTransaction();
@@ -165,7 +167,29 @@ public class IngredientDaoSqlImpl implements BaseDaoSql, IngredientDao {
 
 	@Override
 	public Ingredient read(long id) {
-		return null;
+		Log.d("IngredientDaoSqlImpl", "Reading Ingredient for id = " + id);
+		Ingredient result = null;
+		String whereClause = IngredientContract._ID + EQUALS + PLACEHOLDER;
+		String[] whereArgs = new String[1];
+		whereArgs[0] = Long.valueOf(id).toString();
+
+		sqlHelper.getWritableDatabase().beginTransactionNonExclusive();
+		try {
+			Cursor cursor = sqlHelper.getWritableDatabase().query(true, IngredientContract.TABLE_NAME, INGREDIENT_COLUMNS,
+																  whereClause, whereArgs, null, null, null, null);
+			if(cursor != null && !cursor.isClosed()) {
+				if (cursor.moveToFirst()) {
+					result = createIngredientInstance(cursor);
+				}
+				cursor.close();
+				sqlHelper.getWritableDatabase().setTransactionSuccessful();
+			}
+		}
+		finally {
+			sqlHelper.getWritableDatabase().endTransaction();
+		}
+		Log.d("IngredientDaoSqlImpl", "Loaded " + result);
+		return result;
 	}
 
 	private String buildWhereArgs(Ingredient filter, Collection<String> args) {

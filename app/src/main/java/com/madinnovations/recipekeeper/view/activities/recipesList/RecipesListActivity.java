@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.madinnovations.recipekeeper.R;
+import com.madinnovations.recipekeeper.controller.eventhandlers.CategoryEventHandler;
 import com.madinnovations.recipekeeper.controller.eventhandlers.RecipeEventHandler;
 import com.madinnovations.recipekeeper.controller.events.recipe.RecipeSelectedEvent;
 import com.madinnovations.recipekeeper.model.utils.IntentConstants;
@@ -41,11 +42,13 @@ import javax.inject.Inject;
  */
 public class RecipesListActivity extends Activity {
 	@Inject
-	protected RecipeEventHandler recipeEventHandler;
+	protected RecipeEventHandler   recipeEventHandler;
 	@Inject
-	protected EventBus eventBus;
-	private ActivityComponent    activityComponent;
-	private RecipeDetailFragment detailFragment;
+	protected CategoryEventHandler categoryEventHandler;
+	@Inject
+	protected EventBus             eventBus;
+	private   ActivityComponent    activityComponent;
+	private   RecipeDetailFragment detailFragment;
 
 	@Override
 	protected void onResume() {

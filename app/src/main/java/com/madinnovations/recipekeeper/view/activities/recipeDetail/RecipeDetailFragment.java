@@ -22,21 +22,29 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.madinnovations.recipekeeper.R;
+import com.madinnovations.recipekeeper.controller.events.category.CategoriesLoadedEvent;
+import com.madinnovations.recipekeeper.controller.events.category.CategoryPersistenceEvent;
 import com.madinnovations.recipekeeper.controller.events.recipe.RecipePersistenceEvent;
 import com.madinnovations.recipekeeper.controller.events.recipe.RecipeSavedEvent;
 import com.madinnovations.recipekeeper.controller.events.recipe.RecipeSelectedEvent;
+import com.madinnovations.recipekeeper.model.entities.Category;
 import com.madinnovations.recipekeeper.model.entities.Recipe;
 import com.madinnovations.recipekeeper.model.utils.DateUtils;
 import com.madinnovations.recipekeeper.model.utils.StringUtils;
 import com.madinnovations.recipekeeper.view.activities.recipesList.RecipesListActivity;
 import com.madinnovations.recipekeeper.view.adapters.CategoryListAdapter;
+import com.madinnovations.recipekeeper.view.adapters.CategorySpinnerAdapter;
 import com.madinnovations.recipekeeper.view.adapters.IngredientListAdapter;
 import com.madinnovations.recipekeeper.view.adapters.UnitOfMeasureSpinnerAdapter;
 import com.madinnovations.recipekeeper.view.di.modules.FragmentModule;
@@ -45,7 +53,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -54,7 +64,7 @@ import javax.inject.Inject;
  */
 public class RecipeDetailFragment extends Fragment {
 	@Inject
-	protected CategoryListAdapter   categoryListAdapter;
+	protected CategorySpinnerAdapter categorySpinnerAdapter;
 	@Inject
 	protected IngredientListAdapter ingredientListAdapter;
 	@Inject
@@ -67,7 +77,8 @@ public class RecipeDetailFragment extends Fragment {
 	private   EditText            directionsEdit;
 	private   EditText            notesEdit;
 	private   EditText            sourceEdit;
-	private   ListView            categoriesList;
+	private   LinearLayout        categoriesLayout;
+	private   LinearLayout        ingredientsLayout;
 	private   TextView            createdView;
 	private   TextView            updatedView;
 	private   Button              saveButton;
@@ -114,11 +125,13 @@ public class RecipeDetailFragment extends Fragment {
 		sourceEdit = (EditText)layout.findViewById(R.id.recipe_source_edit);
 		createdView = (TextView) layout.findViewById(R.id.recipe_created_text);
 		updatedView = (TextView) layout.findViewById(R.id.recipe_updated_text);
-		categoriesList = (ListView)layout.findViewById(R.id.recipe_categories_list);
+		categoriesLayout = (LinearLayout)layout.findViewById(R.id.recipe_categories_list);
 		saveButton = (Button)layout.findViewById(R.id.recipe_save_button);
 
 		initSaveButton();
-		initListView();
+		initCategoryLayout();
+		initIngredientsLayout();
+		eventBus.post(new CategoryPersistenceEvent(CategoryPersistenceEvent.Action.READ_BY_FILTER, null));
 		return layout;
 	}
 
@@ -151,6 +164,20 @@ public class RecipeDetailFragment extends Fragment {
 			toastString = getString((R.string.toast_recipe_saved_error));
 		}
 		Toast.makeText(getActivity(), toastString, Toast.LENGTH_LONG).show();
+	}
+
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void onCategoriesLoaded(CategoriesLoadedEvent event) {
+		categorySpinnerAdapter.clear();
+		if(event.isSuccessful() || event.getCategorySet() == null || event.getCategorySet().size() == 0) {
+			categorySpinnerAdapter.add(new Category("Select Category"));
+			categorySpinnerAdapter.addAll(event.getCategorySet());
+			categorySpinnerAdapter.notifyDataSetChanged();
+			Log.e("RecipeDetailFragment", "adapter dataset size = " + categorySpinnerAdapter.getCount());
+		}
+		else {
+			categorySpinnerAdapter.notifyDataSetInvalidated();
+		}
 	}
 
 	private void initSaveButton() {
@@ -213,12 +240,28 @@ public class RecipeDetailFragment extends Fragment {
 		});
 	}
 
-	private void initListView() {
-		View footerView;
+	private void initCategoryLayout() {
+		final View rowView = getActivity().getLayoutInflater().inflate(R.layout.add_category_view, categoriesLayout, false);
+		categoriesLayout.addView(rowView);
+		Spinner categorySpinner = (Spinner)rowView.findViewById(R.id.add_category_spinner);
+		categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				Category category = (Category)parent.getItemAtPosition(position);
+				recipe.getCategories().add(category);
+				TextView textView = (TextView)getActivity().getLayoutInflater().inflate(android.R.layout
+																							   .simple_dropdown_item_1line,
+																					categoriesLayout, false);
+				textView.setText(category.getName());
+				categoriesLayout.addView(textView);
+			}
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
 
-		footerView = getActivity().getLayoutInflater().inflate(
-				R.layout.category_list_footer, categoriesList, false);
-		categoriesList.addFooterView(footerView);
+			}
+		});
+		categorySpinner.setAdapter(categorySpinnerAdapter);
+		categorySpinnerAdapter.setDropDownViewResource(R.layout.category_spinner_row);
 
 		// Create and set onClick methods for sorting the {@link World} list.
 //		headerView.findViewById(R.id.nameHeader).setOnClickListener(new View.OnClickListener() {
@@ -247,7 +290,7 @@ public class RecipeDetailFragment extends Fragment {
 //				}
 //			});
 //		}
-		categoriesList.setAdapter(categoryListAdapter);
+//		categoriesList.setAdapter(categoryListAdapter);
 
 		// Clicking a row in the listView will send the user to the recipes details activity
 //		categoriesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -259,7 +302,75 @@ public class RecipeDetailFragment extends Fragment {
 //				}
 //			}
 //		});
-		registerForContextMenu(categoriesList);
+//		registerForContextMenu(categoriesList);
+	}
+
+	private void initIngredientsLayout() {
+		List<String> list = new ArrayList<String>();
+		ArrayAdapter<String> categorySpinnerAdapter = new ArrayAdapter<String>(getActivity(),
+																			   android.R.layout.simple_spinner_item) {
+
+			@Override
+			public View getDropDownView(int position, View convertView, ViewGroup parent) {
+				View v = null;
+
+				if(position == 0) {
+					TextView textView = new TextView(getContext());
+					textView.setHeight(0);
+					textView.setVisibility(View.GONE);
+					v = textView;
+				}
+				else {
+					v = super.getDropDownView(position, null, parent);
+				}
+
+				parent.setVerticalScrollBarEnabled(false);
+				return v;
+			}
+		};
+
+		categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+		// Create and set onClick methods for sorting the {@link World} list.
+//		headerView.findViewById(R.id.nameHeader).setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+////				controller.sortRecipesByName();
+//			}
+//		});
+//		headerView.findViewById(R.id.categoriesHeader).setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//			}
+//		});
+//		headerView.findViewById(R.id.createdHeader).setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//			}
+//		});
+//		View updatedView = headerView.findViewById(R.id.updatedHeader);
+//		if(updatedView != null) {
+//			updatedView.setOnClickListener(new View.OnClickListener
+//					() {
+//				@Override
+//				public void onClick(View v) {
+////					controller.sortRecipesByUpdated();
+//				}
+//			});
+//		}
+//		categoriesList.setAdapter(categoryListAdapter);
+
+		// Clicking a row in the listView will send the user to the recipes details activity
+//		categoriesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//			@Override
+//			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//				Recipe theRecipe = (Recipe) listView.getItemAtPosition(position);
+//				if (theRecipe != null) {
+//					editRecipe(theRecipe);
+//				}
+//			}
+//		});
+//		registerForContextMenu(categoriesList);
 	}
 
 	private void copyRecipeToView() {
@@ -282,7 +393,7 @@ public class RecipeDetailFragment extends Fragment {
 			this.updatedView.setText(String.format(getString(R.string.label_last_updated),
 						DateUtils.getFormattedDateOrTime(getActivity(), this.recipe.getUpdated().getTimeInMillis())));
 		}
-		categoryListAdapter.notifyDataSetChanged();
+//		categoryListAdapter.notifyDataSetChanged();
 	}
 
 	// Getters and setters

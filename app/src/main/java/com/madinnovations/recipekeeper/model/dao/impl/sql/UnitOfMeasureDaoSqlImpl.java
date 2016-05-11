@@ -79,16 +79,24 @@ public class UnitOfMeasureDaoSqlImpl implements BaseDaoSql, UnitOfMeasureDao {
 		values.put(UnitOfMeasureContract.NOTES_COLUMN_NAME, uom.getNotes());
 
 		sqlHelper.getWritableDatabase().beginTransaction();
-		if(uom.getId() == DataConstants.UNINITIALIZED) {
-			uom.setId(sqlHelper.getWritableDatabase().insert(UnitOfMeasureContract.TABLE_NAME, null, values));
-			result = (uom.getId() != DataConstants.UNINITIALIZED);
+		try {
+			if (uom.getId() == DataConstants.UNINITIALIZED) {
+				uom.setId(sqlHelper.getWritableDatabase().insert(UnitOfMeasureContract.TABLE_NAME, null, values));
+				result = (uom.getId() != DataConstants.UNINITIALIZED);
+			}
+			else {
+				values.put(UnitOfMeasureContract._ID, uom.getId());
+				int count = sqlHelper.getWritableDatabase().update(UnitOfMeasureContract.TABLE_NAME, values,
+																   UnitOfMeasureContract._ID + EQUALS + PLACEHOLDER,
+																   new String[]{Long.valueOf(uom.getId()).toString()});
+				result = (count == 1);
+			}
+			if (result) {
+				sqlHelper.getWritableDatabase().setTransactionSuccessful();
+			}
 		}
-		else {
-			values.put(UnitOfMeasureContract._ID, uom.getId());
-			int count = sqlHelper.getWritableDatabase().update(UnitOfMeasureContract.TABLE_NAME,values,
-							UnitOfMeasureContract._ID + EQUALS + PLACEHOLDER,
-							new String[]{Long.valueOf(uom.getId()).toString()});
-			result = (count == 1);
+		finally {
+			sqlHelper.getWritableDatabase().endTransaction();
 		}
 		return result;
 	}
@@ -105,7 +113,9 @@ public class UnitOfMeasureDaoSqlImpl implements BaseDaoSql, UnitOfMeasureDao {
 		try {
 			result = (sqlHelper.getWritableDatabase().delete(UnitOfMeasureContract.TABLE_NAME, whereClause,
 															 whereArgsList.toArray(whereArgs)) >= 0);
-			sqlHelper.getWritableDatabase().setTransactionSuccessful();
+			if(result) {
+				sqlHelper.getWritableDatabase().setTransactionSuccessful();
+			}
 		}
 		finally {
 			sqlHelper.getWritableDatabase().endTransaction();
@@ -127,14 +137,16 @@ public class UnitOfMeasureDaoSqlImpl implements BaseDaoSql, UnitOfMeasureDao {
 			Cursor cursor = sqlHelper.getWritableDatabase().query(UnitOfMeasureContract.TABLE_NAME, UNIT_OF_MEASURE_COLUMNS,
 																  whereClause, whereArgsList.toArray(whereArgs), null, null,
 																  null, null);
-			cursor.moveToFirst();
-			while(!cursor.isAfterLast()) {
-				UnitOfMeasure unitOfMeasure = createUnitOfMeasureInstance(cursor);
-				result.add(unitOfMeasure);
-				cursor.moveToNext();
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.moveToFirst();
+				while (!cursor.isAfterLast()) {
+					UnitOfMeasure unitOfMeasure = createUnitOfMeasureInstance(cursor);
+					result.add(unitOfMeasure);
+					cursor.moveToNext();
+				}
+				cursor.close();
+				sqlHelper.getWritableDatabase().setTransactionSuccessful();
 			}
-			cursor.close();
-			sqlHelper.getWritableDatabase().setTransactionSuccessful();
 		}
 		finally {
 			sqlHelper.getWritableDatabase().endTransaction();
@@ -155,11 +167,13 @@ public class UnitOfMeasureDaoSqlImpl implements BaseDaoSql, UnitOfMeasureDao {
 		try {
 			Cursor cursor = sqlHelper.getWritableDatabase().query(true, UnitOfMeasureContract.TABLE_NAME, UNIT_OF_MEASURE_COLUMNS,
 																  whereClause, whereArgs, null, null, null, null);
-			if(cursor.moveToFirst()) {
-				result = createUnitOfMeasureInstance(cursor);
+			if(cursor != null && !cursor.isClosed()) {
+				if (cursor.moveToFirst()) {
+					result = createUnitOfMeasureInstance(cursor);
+				}
+				cursor.close();
+				sqlHelper.getWritableDatabase().setTransactionSuccessful();
 			}
-			cursor.close();
-			sqlHelper.getWritableDatabase().setTransactionSuccessful();
 		}
 		finally {
 			sqlHelper.getWritableDatabase().endTransaction();
