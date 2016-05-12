@@ -39,7 +39,6 @@ dependencies {
 	apt 'com.google.dagger:dagger-compiler:2.4'
 	compile 'com.android.support:support-annotations:23.3.0'
 	compile 'com.android.support:support-v4:23.3.0'
-	compile files('libs/activeandroid-3.0.jar')
 	compile 'org.greenrobot:eventbus:3.0.0'
 	compile 'com.google.code.gson:gson:2.6.2'
 }

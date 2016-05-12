@@ -15,8 +15,6 @@
  */
 package com.madinnovations.recipekeeper.view;
 
-import android.util.Log;
-
 import com.activeandroid.app.Application;
 import com.madinnovations.recipekeeper.controller.eventhandlers.RecipeEventHandler;
 import com.madinnovations.recipekeeper.controller.eventhandlers.UnitOfMeasureEventHandler;
