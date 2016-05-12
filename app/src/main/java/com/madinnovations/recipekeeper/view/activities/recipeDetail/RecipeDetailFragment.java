@@ -16,6 +16,7 @@
 package com.madinnovations.recipekeeper.view.activities.recipeDetail;
 
 import android.app.Fragment;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -26,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -40,6 +42,7 @@ import com.madinnovations.recipekeeper.controller.events.recipe.RecipeSavedEvent
 import com.madinnovations.recipekeeper.controller.events.recipe.RecipeSelectedEvent;
 import com.madinnovations.recipekeeper.model.entities.Category;
 import com.madinnovations.recipekeeper.model.entities.Recipe;
+import com.madinnovations.recipekeeper.model.utils.DataConstants;
 import com.madinnovations.recipekeeper.model.utils.DateUtils;
 import com.madinnovations.recipekeeper.model.utils.StringUtils;
 import com.madinnovations.recipekeeper.view.activities.recipesList.RecipesListActivity;
@@ -77,6 +80,7 @@ public class RecipeDetailFragment extends Fragment {
 	private   EditText            directionsEdit;
 	private   EditText            notesEdit;
 	private   EditText            sourceEdit;
+	private   LinearLayout        addCategoryLayout;
 	private   LinearLayout        categoriesLayout;
 	private   LinearLayout        ingredientsLayout;
 	private   TextView            createdView;
@@ -125,7 +129,9 @@ public class RecipeDetailFragment extends Fragment {
 		sourceEdit = (EditText)layout.findViewById(R.id.recipe_source_edit);
 		createdView = (TextView) layout.findViewById(R.id.recipe_created_text);
 		updatedView = (TextView) layout.findViewById(R.id.recipe_updated_text);
-		categoriesLayout = (LinearLayout)layout.findViewById(R.id.recipe_categories_list);
+		addCategoryLayout = (LinearLayout)layout.findViewById(R.id.add_category_layout);
+		categoriesLayout = (LinearLayout)layout.findViewById(R.id.categories_layout);
+
 		saveButton = (Button)layout.findViewById(R.id.recipe_save_button);
 
 		initSaveButton();
@@ -230,8 +236,6 @@ public class RecipeDetailFragment extends Fragment {
 					newRecipe.setSource(value);
 					changed = true;
 				}
-				// TODO: Categories
-				// TODO: Ingredients
 
 				if(changed && !errors) {
 					eventBus.post(new RecipePersistenceEvent(RecipePersistenceEvent.Action.SAVE, newRecipe));
@@ -241,23 +245,32 @@ public class RecipeDetailFragment extends Fragment {
 	}
 
 	private void initCategoryLayout() {
-		final View rowView = getActivity().getLayoutInflater().inflate(R.layout.add_category_view, categoriesLayout, false);
-		categoriesLayout.addView(rowView);
-		Spinner categorySpinner = (Spinner)rowView.findViewById(R.id.add_category_spinner);
-		categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+		final Spinner categorySpinner = (Spinner)addCategoryLayout.findViewById(R.id.add_category_spinner);
+		ImageButton addCategoryButton = (ImageButton)addCategoryLayout.findViewById(R.id.add_category_button);
+		addCategoryButton.setOnClickListener(new View.OnClickListener() {
 			@Override
-			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-				Category category = (Category)parent.getItemAtPosition(position);
-				recipe.getCategories().add(category);
-				TextView textView = (TextView)getActivity().getLayoutInflater().inflate(android.R.layout
-																							   .simple_dropdown_item_1line,
-																					categoriesLayout, false);
-				textView.setText(category.getName());
-				categoriesLayout.addView(textView);
-			}
-			@Override
-			public void onNothingSelected(AdapterView<?> parent) {
-
+			public void onClick(View view) {
+				Category category = (Category)categorySpinner.getSelectedItem();
+				if(category.getId() != DataConstants.UNINITIALIZED) {
+					recipe.getCategories().add(category);
+					TextView textView = (TextView)getActivity().getLayoutInflater().inflate(R.layout.category_list_view,
+							categoriesLayout, false);
+					textView.setText(category.getName());
+					textView.setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View view) {
+							// TODO: implement removing the category from the Recipe and adding it back to the spinner
+						}
+					});
+					categoriesLayout.addView(textView);
+					categorySpinnerAdapter.remove(category);
+					if(categorySpinnerAdapter.getCount() == 0) {
+						categorySpinnerAdapter.notifyDataSetInvalidated();
+					}
+					else {
+						categorySpinnerAdapter.notifyDataSetChanged();
+					}
+				}
 			}
 		});
 		categorySpinner.setAdapter(categorySpinnerAdapter);

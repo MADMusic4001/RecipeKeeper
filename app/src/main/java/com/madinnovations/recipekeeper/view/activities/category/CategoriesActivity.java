@@ -19,7 +19,6 @@ import com.madinnovations.recipekeeper.view.di.components.ActivityComponent;
 import com.madinnovations.recipekeeper.view.di.modules.ActivityModule;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import javax.inject.Inject;
 
@@ -37,31 +36,12 @@ public class CategoriesActivity extends Activity {
     private boolean dualPane;
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if(eventBus != null && !eventBus.isRegistered(this)) {
-            eventBus.register(this);
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        if(eventBus != null) {
-            eventBus.unregister(this);
-        }
-        super.onPause();
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         activityComponent = ((RecipeKeeperApp) getApplication()).getApplicationComponent()
                 .newActivityComponent(new ActivityModule(this));
         activityComponent.injectInto(this);
-        if(!eventBus.isRegistered(this)) {
-            eventBus.register(this);
-        }
         setContentView(R.layout.categories);
 
         listFragment = (CategoriesListFragment) getFragmentManager().findFragmentById(R.id.categories_list_fragment);
@@ -94,6 +74,16 @@ public class CategoriesActivity extends Activity {
             }
         }
         if(id == R.id.actionNewCategory){
+            if (!dualPane && detailFragment == null) {
+                detailFragment = new CategoryDetailFragment();
+                if(!detailFragment.isVisible()) {
+                    getFragmentManager().beginTransaction()
+                                .hide(listFragment)
+                                .add(R.id.categoriesFragmentContainer, detailFragment)
+                                .addToBackStack("listFragment")
+                                .commit();
+                }
+            }
             eventBus.post(new CategorySelectedEvent(new Category()));
             result = true;
         }
@@ -106,21 +96,6 @@ public class CategoriesActivity extends Activity {
             startActivity(intent);
         }
         return result || super.onOptionsItemSelected(item);
-    }
-
-    @Subscribe
-    public void onCategorySelectedEvent(CategorySelectedEvent event) {
-        if (!dualPane) {
-            if (detailFragment == null) {
-                detailFragment = new CategoryDetailFragment();
-            }
-            getFragmentManager().beginTransaction()
-                    .hide(listFragment)
-                    .add(R.id.categoriesFragmentContainer, detailFragment)
-                    .addToBackStack("listFragment")
-                    .commit();
-        }
-        detailFragment.setCategory(event.getCategory());
     }
 
     // Getters and setters

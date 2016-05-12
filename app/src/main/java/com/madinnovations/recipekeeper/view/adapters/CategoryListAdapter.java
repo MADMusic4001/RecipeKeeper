@@ -59,7 +59,7 @@ public class CategoryListAdapter extends ArrayAdapter<Category> {
 
 		if (convertView == null) {
 			rowView = layoutInflater.inflate(LAYOUT_RESOURCE_ID, parent, false);
-			holder = new ViewHolder((TextView) rowView.findViewById(R.id.categoy_name_text));
+			holder = new ViewHolder((TextView) rowView.findViewById(R.id.category_name_text));
 			rowView.setTag(holder);
 		}
 		else {

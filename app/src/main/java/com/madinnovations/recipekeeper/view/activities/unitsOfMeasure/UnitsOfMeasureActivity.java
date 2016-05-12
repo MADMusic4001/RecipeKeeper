@@ -34,7 +34,6 @@ import com.madinnovations.recipekeeper.view.di.components.ActivityComponent;
 import com.madinnovations.recipekeeper.view.di.modules.ActivityModule;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import javax.inject.Inject;
 
@@ -52,31 +51,12 @@ public class UnitsOfMeasureActivity extends Activity {
 	private boolean dualPane;
 
 	@Override
-	protected void onResume() {
-		super.onResume();
-		if(eventBus != null && !eventBus.isRegistered(this)) {
-			eventBus.register(this);
-		}
-	}
-
-	@Override
-	protected void onPause() {
-		if(eventBus != null) {
-			eventBus.unregister(this);
-		}
-		super.onPause();
-	}
-
-	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		activityComponent = ((RecipeKeeperApp) getApplication()).getApplicationComponent()
 				.newActivityComponent(new ActivityModule(this));
 		activityComponent.injectInto(this);
-		if(!eventBus.isRegistered(this)) {
-			eventBus.register(this);
-		}
 		setContentView(R.layout.units_of_measure);
 
 		listFragment = (UnitsOfMeasureListFragment) getFragmentManager().findFragmentById(R.id.units_of_measure_list_fragment);
@@ -109,6 +89,16 @@ public class UnitsOfMeasureActivity extends Activity {
 			}
 		}
 		if(id == R.id.actionNewUnitOfMeasure){
+			if (!dualPane && detailFragment == null) {
+				detailFragment = new UnitOfMeasureDetailFragment();
+				if (!detailFragment.isVisible()) {
+					getFragmentManager().beginTransaction()
+							.hide(listFragment)
+							.add(R.id.unitOfMeasureFragmentContainer, detailFragment)
+							.addToBackStack("listFragment")
+							.commit();
+				}
+			}
 			eventBus.post(new UnitOfMeasureSelectedEvent(new UnitOfMeasure()));
 			result = true;
 		}
@@ -121,21 +111,6 @@ public class UnitsOfMeasureActivity extends Activity {
 			startActivity(intent);
 		}
 		return result || super.onOptionsItemSelected(item);
-	}
-
-	@Subscribe
-	public void onUnitOfMeasureSelectedEvent(UnitOfMeasureSelectedEvent event) {
-		if (!dualPane) {
-			if (detailFragment == null) {
-				detailFragment = new UnitOfMeasureDetailFragment();
-			}
-			getFragmentManager().beginTransaction()
-					.hide(listFragment)
-					.add(R.id.unitOfMeasureFragmentContainer, detailFragment)
-					.addToBackStack("listFragment")
-					.commit();
-		}
-		detailFragment.setUnitOfMeasure(event.getUnitOfMeasure());
 	}
 
 	// Getters and setters
