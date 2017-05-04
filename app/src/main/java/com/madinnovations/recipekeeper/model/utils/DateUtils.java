@@ -23,10 +23,7 @@ import java.util.Calendar;
 import javax.inject.Singleton;
 
 /**
- * ${CLASS_DESCRIPTION}
- *
- * @author Mark
- * Created 4/26/2016.
+ * Static utility methods for dealing with numeric Dates.
  */
 @Singleton
 public final class DateUtils {

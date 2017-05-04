@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Implementation of the {@link RecipeDao} for maintaining a {@link Recipe} in a SQLite database.
+ * Implementation of the {@link RecipeDao} for managing {@link Recipe} instances in a SQLite database.
  */
 public class RecipeDaoSqlImpl implements BaseDaoSql, RecipeDao {
 	public static abstract class RecipeContract implements BaseColumns {
@@ -233,9 +233,9 @@ public class RecipeDaoSqlImpl implements BaseDaoSql, RecipeDao {
 		String whereClause = buildWhereArgs(filter, whereArgsList);
 		String[] whereArgs = new String[whereArgsList.size()];
 
-		sqlHelper.getWritableDatabase().beginTransactionNonExclusive();
+		sqlHelper.getReadableDatabase().beginTransactionNonExclusive();
 		try {
-			Cursor cursor = sqlHelper.getWritableDatabase().query(RecipeContract.TABLE_NAME, RECIPE_COLUMNS, whereClause,
+			Cursor cursor = sqlHelper.getReadableDatabase().query(RecipeContract.TABLE_NAME, RECIPE_COLUMNS, whereClause,
 																  whereArgsList.toArray(whereArgs), null, null, null, null);
 			if(cursor != null && !cursor.isClosed()) {
 				cursor.moveToFirst();

@@ -17,24 +17,25 @@ package com.madinnovations.recipekeeper.model.dao.impl.sql;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.madinnovations.recipekeeper.model.dao.IngredientDao;
+import com.madinnovations.recipekeeper.model.dao.RecipeDao;
+import com.madinnovations.recipekeeper.model.dao.UnitOfMeasureDao;
 import com.madinnovations.recipekeeper.model.entities.Ingredient;
-import com.madinnovations.recipekeeper.model.entities.Recipe;
 import com.madinnovations.recipekeeper.model.utils.DataConstants;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 /**
- * Implementation of the {@link IngredientDao} for maintaining a {@link Ingredient} in a SQLite database.
+ * Implementation of the {@link IngredientDao} for managing {@link Ingredient} instances in a SQLite database.
  */
 public class IngredientDaoSqlImpl implements BaseDaoSql, IngredientDao {
 	public static abstract class IngredientContract implements BaseColumns {
@@ -68,15 +69,20 @@ public class IngredientDaoSqlImpl implements BaseDaoSql, IngredientDao {
 	private static final int      VALUE_INDEX  		= 2;
 	private static final int      UOM_ID_INDEX 		= 3;
 	private static final int      RECIPE_ID_INDEX   = 4;
-	private RecipeKeeperSqlHelper sqlHelper;
+	private SQLiteOpenHelper sqlHelper;
+	private RecipeDao recipeDao;
+	private UnitOfMeasureDao unitOfMeasureDao;
 
 	/**
 	 * Creates a IngredientDaoSqlImp instance with the given {@link RecipeKeeperSqlHelper}
 	 *
-	 * @param sqlHelper  the RecipeKeeperSqlHelper to use
+	 * @param sqlHelper  an {@link SQLiteOpenHelper} instance
+	 * @param recipeDao  a {@link RecipeDao} instance
 	 */
-	public IngredientDaoSqlImpl(RecipeKeeperSqlHelper sqlHelper) {
+	public IngredientDaoSqlImpl(SQLiteOpenHelper sqlHelper, RecipeDao recipeDao, UnitOfMeasureDao unitOfMeasureDao) {
 		this.sqlHelper = sqlHelper;
+		this.recipeDao = recipeDao;
+		this.unitOfMeasureDao = unitOfMeasureDao;
 	}
 
 	@Override
@@ -114,12 +120,9 @@ public class IngredientDaoSqlImpl implements BaseDaoSql, IngredientDao {
 	@Override
 	public boolean delete(Ingredient ingredient) {
 		boolean result = false;
-		String whereClause = null;
 		ArrayList<String> whereArgsList = new ArrayList<>();
-		String[] whereArgs;
-
-		whereClause = buildWhereArgs(ingredient, whereArgsList);
-		whereArgs = new String[whereArgsList.size()];
+		String whereClause = buildWhereArgs(ingredient, whereArgsList);
+		String[] whereArgs = new String[whereArgsList.size()];
 
 		sqlHelper.getWritableDatabase().beginTransactionNonExclusive();
 		try {
@@ -199,7 +202,7 @@ public class IngredientDaoSqlImpl implements BaseDaoSql, IngredientDao {
 		if(filter != null) {
 			if(filter.getId() != DataConstants.UNINITIALIZED) {
 				whereClause = addFilter(whereClause, IngredientContract._ID,
-										Long.valueOf(filter.getId()).toString(), isFirst, args);
+										Long.valueOf(filter.getId()).toString(), true, args);
 				isFirst = false;
 			}
 			if(filter.getName() != null && !filter.getName().isEmpty()) {
@@ -219,7 +222,6 @@ public class IngredientDaoSqlImpl implements BaseDaoSql, IngredientDao {
 			if(filter.getParent() != null && filter.getParent().getId() != DataConstants.UNINITIALIZED) {
 				whereClause = addFilter(whereClause, IngredientContract.RECIPE_ID_COLUMN_NAME,
 										Long.valueOf(filter.getParent().getId()).toString(), isFirst, args);
-				isFirst = false;
 			}
 		}
 		return whereClause;
@@ -239,7 +241,8 @@ public class IngredientDaoSqlImpl implements BaseDaoSql, IngredientDao {
 		anIngredient.setId(cursor.getLong(ID_INDEX));
 		anIngredient.setName(cursor.getString(NAME_INDEX));
 		anIngredient.setValue(new BigDecimal(cursor.getString(VALUE_INDEX)));
-
+		anIngredient.setParent(recipeDao.read(cursor.getLong(RECIPE_ID_INDEX)));
+		anIngredient.setUnit(unitOfMeasureDao.read(cursor.getLong(UOM_ID_INDEX)));
 		return anIngredient;
 	}
 }

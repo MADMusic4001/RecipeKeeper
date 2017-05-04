@@ -33,7 +33,7 @@ import java.util.Set;
 import javax.inject.Singleton;
 
 /**
- * Implementation of the {@link CategoryDao} for maintaining a {@link Category} in a SQLite database.
+ * Implementation of the {@link CategoryDao} for managing {@link Category} instances in a SQLite database.
  */
 @Singleton
 public class CategoryDaoSqlImpl implements BaseDaoSql, CategoryDao {
@@ -82,7 +82,7 @@ public class CategoryDaoSqlImpl implements BaseDaoSql, CategoryDao {
 			else {
 				values.put("_id", category.getId());
 				int count = sqlHelper.getWritableDatabase().update(CategoryContract.TABLE_NAME, values,
-																   WHERE + SPACE + CategoryContract._ID + EQUALS + PLACEHOLDER,
+																   CategoryContract._ID + EQUALS + PLACEHOLDER,
 																   new String[]{Long.valueOf(category.getId()).toString()});
 				result = (count == 1);
 			}

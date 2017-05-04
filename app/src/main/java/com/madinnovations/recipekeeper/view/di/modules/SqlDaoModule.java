@@ -64,8 +64,9 @@ public class SqlDaoModule {
      * @return  a new instance of IngredientDaoSqlImp
      */
     @Provides @Singleton
-    public IngredientDao provideIngredientDao(RecipeKeeperSqlHelper sqlHelper) {
-        return new IngredientDaoSqlImpl(sqlHelper);
+    public IngredientDao provideIngredientDao(RecipeKeeperSqlHelper sqlHelper, RecipeDao recipeDao,
+                                              UnitOfMeasureDao unitOfMeasureDao) {
+        return new IngredientDaoSqlImpl(sqlHelper, recipeDao, unitOfMeasureDao);
     }
 
     /**

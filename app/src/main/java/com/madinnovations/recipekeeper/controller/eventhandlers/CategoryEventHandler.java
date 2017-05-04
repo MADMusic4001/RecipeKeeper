@@ -25,7 +25,7 @@ public class CategoryEventHandler {
     private CategoryDao categoryDao;
 
     /**
-     * Creates a CategoryEventHandler instance with the given {@link EventBus} and {@link CategoryDao}.
+     * Creates a CategoryEventHandler instance with the given {@link EventBus} and  {@link CategoryDao}.
      *
      * @param eventBus  an EventBus instance
      * @param categoryDao  a CategoryDao instance

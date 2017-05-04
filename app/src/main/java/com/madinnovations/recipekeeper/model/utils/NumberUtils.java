@@ -25,7 +25,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Static utility methods for dealing with numeric values
+ * Static utility methods for dealing with numeric values.
  */
 public final class NumberUtils {
 	private static final Map<BigDecimal, String> fractionMap = new HashMap<>();

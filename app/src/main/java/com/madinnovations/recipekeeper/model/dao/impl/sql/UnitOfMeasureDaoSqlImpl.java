@@ -33,7 +33,7 @@ import java.util.Set;
 import javax.inject.Singleton;
 
 /**
- * Implementation of the {@link UnitOfMeasureDao} for maintaining a {@link UnitOfMeasure} in a SQLite database.
+ * Implementation of the {@link UnitOfMeasureDao} for manging {@link UnitOfMeasure} instances in a SQLite database.
  */
 @Singleton
 public class UnitOfMeasureDaoSqlImpl implements BaseDaoSql, UnitOfMeasureDao {

@@ -23,14 +23,10 @@ import com.madinnovations.recipekeeper.view.di.components.DaggerApplicationCompo
 import com.madinnovations.recipekeeper.view.di.modules.ApplicationModule;
 import com.madinnovations.recipekeeper.view.di.modules.EventHandlerModule;
 
-import org.greenrobot.eventbus.EventBus;
-
 import javax.inject.Inject;
 
 /**
  * Main class for maintaining application state.
- *
- * Created 4/23/2016.
  */
 public class RecipeKeeperApp extends Application {
 	private ApplicationComponent applicationComponent;

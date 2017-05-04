@@ -1,7 +1,7 @@
 package com.madinnovations.recipekeeper.model.utils;
 
 /**
- * Created by madanle on 5/5/16.
+ * Static utility methods for dealing with Strings.
  */
 public final class StringUtils {
     /**
